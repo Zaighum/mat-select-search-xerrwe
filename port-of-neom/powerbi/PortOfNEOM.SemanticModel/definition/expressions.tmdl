@@ -1,0 +1,5 @@
+expression ExcelFilePath = "C:\PortOfNEOM\Port_of_NEOM_Data.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: df034541-fd1c-5fdc-8633-6835cc565aff
+
+	annotation PBI_ResultType = Text
+

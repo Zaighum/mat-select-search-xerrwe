@@ -1,0 +1,133 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "f08a4bfca3270e0a9999",
+  "position": {
+    "x": 24,
+    "y": 462,
+    "z": 8000,
+    "height": 234,
+    "width": 1232,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Corridor"
+                    }
+                  },
+                  "Property": "Sequence"
+                }
+              },
+              "queryRef": "Corridor.Sequence",
+              "displayName": "Step"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Corridor"
+                    }
+                  },
+                  "Property": "Node"
+                }
+              },
+              "queryRef": "Corridor.Node",
+              "displayName": "Node"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Corridor"
+                    }
+                  },
+                  "Property": "Country"
+                }
+              },
+              "queryRef": "Corridor.Country",
+              "displayName": "Country"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Corridor"
+                    }
+                  },
+                  "Property": "Role"
+                }
+              },
+              "queryRef": "Corridor.Role",
+              "displayName": "Role"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Corridor"
+                    }
+                  },
+                  "Property": "OnwardMode"
+                }
+              },
+              "queryRef": "Corridor.OnwardMode",
+              "displayName": "Onward mode"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Corridor"
+                  }
+                },
+                "Property": "Sequence"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Europe - Egypt - Port of NEOM - GCC / Iraq land bridge'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

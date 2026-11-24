@@ -1,0 +1,80 @@
+table Investment
+	lineageTag: dce16353-a04f-50d2-8735-2a3922d23c45
+
+	measure 'Stated Investment (SAR bn)' = MAX(Investment[AmountSARbn])
+		formatString: 0.0
+		lineageTag: ae7a1635-f6fc-5d28-a0c8-63d5fd09f712
+
+	measure 'Stated Investment (USD bn)' = MAX(Investment[AmountUSDbn])
+		formatString: 0.00
+		lineageTag: ead1250f-1142-502c-8786-82372ee9843c
+
+	column InvestmentID
+		dataType: string
+		lineageTag: bd65eac8-11ef-500c-bfde-618ca9f02d16
+		summarizeBy: none
+		sourceColumn: InvestmentID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statement
+		dataType: string
+		lineageTag: 832d50f9-7ca0-5530-8a8e-f0b534c42d14
+		summarizeBy: none
+		sourceColumn: Statement
+
+		annotation SummarizationSetBy = Automatic
+
+	column StatementYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e6a4030-762a-5dad-b62d-84760ce6e97f
+		summarizeBy: none
+		sourceColumn: StatementYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column AmountSARbn
+		dataType: double
+		lineageTag: 90a9b00b-c9e2-58c8-904d-72164b6a0b9c
+		summarizeBy: sum
+		sourceColumn: AmountSARbn
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: ad54c708-235a-58f6-9942-f2b32e514f62
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: ea6b377b-5882-525e-ae23-4bb8d04f269d
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	column AmountUSDbn
+		dataType: double
+		lineageTag: 2906c9ef-8147-5773-a601-35165aeb0e33
+		summarizeBy: sum
+		sourceColumn: AmountUSDbn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Investment = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblInvestment",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"InvestmentID", "Statement", "StatementYear", "AmountSARbn", "SourceID", "Note", "AmountUSDbn"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"InvestmentID", type text}, {"Statement", type text}, {"StatementYear", Int64.Type}, {"AmountSARbn", type number}, {"SourceID", type text}, {"Note", type text}, {"AmountUSDbn", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.4.0/schema.json",
+  "name": "3df653700c35765eedd3",
+  "displayName": "Traffic and Trade Corridor",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}

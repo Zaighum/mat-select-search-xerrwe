@@ -1,0 +1,130 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "3f0412ad95562966b380",
+  "position": {
+    "x": 24,
+    "y": 462,
+    "z": 8000,
+    "height": 234,
+    "width": 1232,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "Counterparty"
+                }
+              },
+              "queryRef": "Contracts.Counterparty",
+              "displayName": "Counterparty"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "Scope"
+                }
+              },
+              "queryRef": "Contracts.Scope",
+              "displayName": "Scope"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "Contract Value (SAR m)"
+                }
+              },
+              "queryRef": "Contracts.Contract Value (SAR m)",
+              "displayName": "SAR m"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "Contract Value (USD m)"
+                }
+              },
+              "queryRef": "Contracts.Contract Value (USD m)",
+              "displayName": "USD m"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "Note"
+                }
+              },
+              "queryRef": "Contracts.Note",
+              "displayName": "Note"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Contracts"
+                    }
+                  },
+                  "Property": "SourceID"
+                }
+              },
+              "queryRef": "Contracts.SourceID",
+              "displayName": "Source"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reported contracts'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

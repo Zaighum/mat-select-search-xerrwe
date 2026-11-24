@@ -1,0 +1,21 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["ExcelFilePath","PortProfile","Timeline","CapacityPlan","Equipment","Contracts","Investment","VesselCalls","Corridor","Sources"]
+
+ref table PortProfile
+ref table Timeline
+ref table CapacityPlan
+ref table Equipment
+ref table Contracts
+ref table Investment
+ref table VesselCalls
+ref table Corridor
+ref table Sources

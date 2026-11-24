@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.4.0/schema.json",
+  "name": "735b8117fa6dec3f6d82",
+  "displayName": "Timeline and Sources",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}

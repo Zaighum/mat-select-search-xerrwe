@@ -1,0 +1,109 @@
+table CapacityPlan
+	lineageTag: 57893d3a-5ea8-557c-a5cb-3b70cdb02981
+
+	measure 'Capacity (TEU)' = SUM(CapacityPlan[CapacityTEU])
+		formatString: #,##0
+		lineageTag: eae7d8f5-3841-5d9c-a246-b62413d010a6
+
+	measure 'T1 Phase 1 Capacity (TEU)' = CALCULATE(SUM(CapacityPlan[CapacityTEU]), CapacityPlan[CapacityID] = "C03")
+		formatString: #,##0
+		lineageTag: d8b90853-2223-5069-8672-1b83a72a4994
+
+	measure 'T1 Target Capacity (TEU)' = CALCULATE(SUM(CapacityPlan[CapacityTEU]), CapacityPlan[CapacityID] = "C04")
+		formatString: #,##0
+		lineageTag: 125d7509-92aa-55e7-ba4f-231f74a036c3
+
+	measure 'Phase 1 % of Target' = DIVIDE([T1 Phase 1 Capacity (TEU)], [T1 Target Capacity (TEU)])
+		formatString: 0.0%
+		lineageTag: d47fb54c-29fe-51dd-a1bc-e8233189fc58
+
+	measure 'Phase 1 % of Saudi Volume' = DIVIDE([T1 Phase 1 Capacity (TEU)], [Saudi Port Volume (TEU)])
+		formatString: 0.0%
+		lineageTag: 4e5d7177-8701-5074-aeef-314414cd2be3
+
+	column CapacityID
+		dataType: string
+		lineageTag: 6b65d34f-52b3-5f7f-b3cc-97b156ffc8b1
+		summarizeBy: none
+		sourceColumn: CapacityID
+
+		annotation SummarizationSetBy = Automatic
+
+	column StatementYear
+		dataType: int64
+		formatString: 0
+		lineageTag: cac4ace6-5193-50e2-af34-60b0068801fe
+		summarizeBy: none
+		sourceColumn: StatementYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column Milestone
+		dataType: string
+		lineageTag: 9108cfbc-31c0-52af-a625-2917adf357d8
+		summarizeBy: none
+		sourceColumn: Milestone
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a954060-9347-507f-8665-c0b4ff647095
+		summarizeBy: none
+		sourceColumn: TargetYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column CapacityTEU
+		dataType: double
+		lineageTag: 48a2691f-d4a3-54d2-b9a0-c7a983e3b961
+		summarizeBy: sum
+		sourceColumn: CapacityTEU
+
+		annotation SummarizationSetBy = Automatic
+
+	column PlanStatus
+		dataType: string
+		lineageTag: 50fbb640-0638-54a9-9207-a9da9ef97b32
+		summarizeBy: none
+		sourceColumn: PlanStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: c9f45853-ff71-5cdf-ac10-1bdac39ad670
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: 96c05ff0-047e-5473-a5e0-b685732a9528
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShareOfSaudiTEU
+		dataType: double
+		lineageTag: a91bdf2a-00d2-58b6-bdaf-f2732ef87170
+		summarizeBy: none
+		sourceColumn: ShareOfSaudiTEU
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CapacityPlan = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCapacityPlan",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"CapacityID", "StatementYear", "Milestone", "TargetYear", "CapacityTEU", "PlanStatus", "SourceID", "Note", "ShareOfSaudiTEU"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"CapacityID", type text}, {"StatementYear", Int64.Type}, {"Milestone", type text}, {"TargetYear", Int64.Type}, {"CapacityTEU", type number}, {"PlanStatus", type text}, {"SourceID", type text}, {"Note", type text}, {"ShareOfSaudiTEU", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

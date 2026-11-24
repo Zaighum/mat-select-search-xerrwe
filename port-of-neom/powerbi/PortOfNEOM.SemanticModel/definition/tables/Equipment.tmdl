@@ -1,0 +1,80 @@
+table Equipment
+	lineageTag: 8fd28c68-7a0d-5735-957a-ee373022929c
+
+	measure 'Equipment Units' = SUM(Equipment[Units])
+		formatString: 0
+		lineageTag: 9ea834bb-530c-583a-b580-40cd5b4cfb71
+
+	measure 'STS Cranes' = CALCULATE(SUM(Equipment[Units]), Equipment[TypeCode] = "STS")
+		formatString: 0
+		lineageTag: 7d5ff9de-f598-55bc-993a-d99e1f9fd5a6
+
+	column EquipmentID
+		dataType: string
+		lineageTag: 1c1a2733-addc-5aea-b3ed-312eb81d7c59
+		summarizeBy: none
+		sourceColumn: EquipmentID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Equipment
+		dataType: string
+		lineageTag: faf67db3-6698-54cf-808e-1c5780e30910
+		summarizeBy: none
+		sourceColumn: Equipment
+
+		annotation SummarizationSetBy = Automatic
+
+	column TypeCode
+		dataType: string
+		lineageTag: 6fa4083c-7c10-5ea7-bb0f-e135d237f7d7
+		summarizeBy: none
+		sourceColumn: TypeCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Units
+		dataType: int64
+		formatString: 0
+		lineageTag: 295f92f0-7fc7-5897-abed-3d487190e508
+		summarizeBy: sum
+		sourceColumn: Units
+
+		annotation SummarizationSetBy = Automatic
+
+	column Supplier
+		dataType: string
+		lineageTag: e5d770a7-d537-51e0-88ea-d6f0da21a06c
+		summarizeBy: none
+		sourceColumn: Supplier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Technology
+		dataType: string
+		lineageTag: 1817323d-dcc2-5fcf-ba78-61d67366d051
+		summarizeBy: none
+		sourceColumn: Technology
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: b6b75e0c-e856-56bc-98a4-c6bfa1c7a18c
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Equipment = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblEquipment",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"EquipmentID", "Equipment", "TypeCode", "Units", "Supplier", "Technology", "SourceID"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"EquipmentID", type text}, {"Equipment", type text}, {"TypeCode", type text}, {"Units", Int64.Type}, {"Supplier", type text}, {"Technology", type text}, {"SourceID", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

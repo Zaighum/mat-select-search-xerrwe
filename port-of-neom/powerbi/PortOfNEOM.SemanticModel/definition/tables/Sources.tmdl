@@ -1,0 +1,69 @@
+table Sources
+	lineageTag: 939b3b24-e66d-53e5-aedc-074234ec58b7
+
+	measure 'Sources Cited' = COUNTROWS(Sources)
+		formatString: 0
+		lineageTag: 3f1fcff7-ea7a-52a1-a1cd-3c846bcb58af
+
+	column SourceID
+		dataType: string
+		isKey
+		lineageTag: 0c4562bd-e669-56cb-84e0-94098d98b061
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Publisher
+		dataType: string
+		lineageTag: d7acade4-ce4f-5e93-85f5-f97e3040b097
+		summarizeBy: none
+		sourceColumn: Publisher
+
+		annotation SummarizationSetBy = Automatic
+
+	column Title
+		dataType: string
+		lineageTag: 142e5ed5-82d2-5633-ae8e-230d6db6fd46
+		summarizeBy: none
+		sourceColumn: Title
+
+		annotation SummarizationSetBy = Automatic
+
+	column Published
+		dataType: string
+		lineageTag: 9aa9d67d-9497-574d-b85d-5e6d822dc5da
+		summarizeBy: none
+		sourceColumn: Published
+
+		annotation SummarizationSetBy = Automatic
+
+	column URL
+		dataType: string
+		dataCategory: WebUrl
+		lineageTag: 2058b616-78c8-54a5-be1a-cf687d9c2918
+		summarizeBy: none
+		sourceColumn: URL
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: b7f57336-10c8-5d7b-8256-06479f0a74b9
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Sources = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblSources",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"SourceID", "Publisher", "Title", "Published", "URL", "Note"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"SourceID", type text}, {"Publisher", type text}, {"Title", type text}, {"Published", type text}, {"URL", type text}, {"Note", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,113 @@
+table VesselCalls
+	lineageTag: 055d83b4-087a-597c-a897-64c827130058
+
+	measure 'Avg Calls per Month' = SUM(VesselCalls[AvgCallsPerMonth])
+		formatString: 0.0
+		lineageTag: 10f668ef-d672-5ccb-92e9-7668070527dc
+
+	measure 'RoRo Calls per Month (Pre-war)' = CALCULATE([Avg Calls per Month], VesselCalls[CallID] = "V01")
+		formatString: 0.0
+		lineageTag: 653b82a3-f2b9-506a-a304-1d3a05a49682
+
+	measure 'RoRo Calls (Sep 2026)' = CALCULATE([Avg Calls per Month], VesselCalls[CallID] = "V02")
+		formatString: 0
+		lineageTag: ee90422a-5d3c-5d71-bc0f-919736a5fa11
+
+	measure 'RoRo Change vs Pre-war' = DIVIDE([RoRo Calls (Sep 2026)], [RoRo Calls per Month (Pre-war)]) - 1
+		formatString: 0%
+		lineageTag: 442c1bef-e901-545c-8d77-ec5fa6ab08bf
+
+	column CallID
+		dataType: string
+		lineageTag: ceedd8c9-4d40-5fc0-9759-0a0b0727bc83
+		summarizeBy: none
+		sourceColumn: CallID
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselType
+		dataType: string
+		lineageTag: 59a28148-1f99-5d77-9521-5841e507caa9
+		summarizeBy: none
+		sourceColumn: VesselType
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodGroup
+		dataType: string
+		lineageTag: 81e28618-cf42-5429-9a03-d3e471fc93c4
+		summarizeBy: none
+		sourceColumn: PeriodGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodDetail
+		dataType: string
+		lineageTag: 2f8e6f72-4795-52ed-9292-93c929bb338a
+		summarizeBy: none
+		sourceColumn: PeriodDetail
+
+		annotation SummarizationSetBy = Automatic
+
+	column Calls
+		dataType: int64
+		formatString: 0
+		lineageTag: 80db1045-9f35-52c8-bba2-c895c0381253
+		summarizeBy: sum
+		sourceColumn: Calls
+
+		annotation SummarizationSetBy = Automatic
+
+	column Months
+		dataType: int64
+		formatString: 0
+		lineageTag: 72f05a18-8589-530d-8b8e-51141497aeb9
+		summarizeBy: none
+		sourceColumn: Months
+
+		annotation SummarizationSetBy = Automatic
+
+	column StatedAvgPerMonth
+		dataType: double
+		lineageTag: 2dedfd5b-4445-5b63-bc68-695a54be16b4
+		summarizeBy: none
+		sourceColumn: StatedAvgPerMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: 74791b9a-bbf2-5911-949d-4678acc76ce1
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: 7bdd2094-b9e5-5e59-b229-a630f4eb297d
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	column AvgCallsPerMonth
+		dataType: double
+		lineageTag: 92bd91c3-97fd-5a60-bc04-70c91ffa703c
+		summarizeBy: sum
+		sourceColumn: AvgCallsPerMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	partition VesselCalls = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblVesselCalls",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"CallID", "VesselType", "PeriodGroup", "PeriodDetail", "Calls", "Months", "StatedAvgPerMonth", "SourceID", "Note", "AvgCallsPerMonth"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"CallID", type text}, {"VesselType", type text}, {"PeriodGroup", type text}, {"PeriodDetail", type text}, {"Calls", Int64.Type}, {"Months", Int64.Type}, {"StatedAvgPerMonth", type number}, {"SourceID", type text}, {"Note", type text}, {"AvgCallsPerMonth", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

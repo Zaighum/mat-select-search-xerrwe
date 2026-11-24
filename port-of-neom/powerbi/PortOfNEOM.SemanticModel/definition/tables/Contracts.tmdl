@@ -1,0 +1,95 @@
+table Contracts
+	lineageTag: b25198e9-1263-59c5-9530-e415d66811f8
+
+	measure 'Contract Value (SAR m)' = SUM(Contracts[ValueSARm])
+		formatString: #,##0
+		lineageTag: 2efb46d0-4a92-5167-8a52-5839926e85be
+
+	measure 'Contract Value (USD m)' = SUM(Contracts[ValueUSDm])
+		formatString: #,##0
+		lineageTag: 33e073b7-907e-58b4-a180-4cf7d704f89b
+
+	column ContractID
+		dataType: string
+		lineageTag: 08eb360a-917a-5871-82b9-8cc83893425b
+		summarizeBy: none
+		sourceColumn: ContractID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Counterparty
+		dataType: string
+		lineageTag: d7d4f624-1fce-52ec-9909-c856b5580aa6
+		summarizeBy: none
+		sourceColumn: Counterparty
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scope
+		dataType: string
+		lineageTag: 020a3857-b267-53df-a3c1-115ffb250eb0
+		summarizeBy: none
+		sourceColumn: Scope
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: 3a881ebc-145b-590b-8673-850cffb45f33
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column StatedValueM
+		dataType: double
+		lineageTag: 117f9d89-a609-54d7-a525-fd92059321dd
+		summarizeBy: sum
+		sourceColumn: StatedValueM
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: f9ccd915-d954-5ffc-ba11-b7824118e7c5
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: ed8bbe04-2a02-5a6a-81c0-bb18d30fbe50
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValueSARm
+		dataType: double
+		lineageTag: 99eee77b-140c-55cb-9f56-82365864c472
+		summarizeBy: sum
+		sourceColumn: ValueSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValueUSDm
+		dataType: double
+		lineageTag: faad909a-d1d8-5298-a53e-7866387b81ac
+		summarizeBy: sum
+		sourceColumn: ValueUSDm
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Contracts = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblContracts",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"ContractID", "Counterparty", "Scope", "Currency", "StatedValueM", "SourceID", "Note", "ValueSARm", "ValueUSDm"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"ContractID", type text}, {"Counterparty", type text}, {"Scope", type text}, {"Currency", type text}, {"StatedValueM", type number}, {"SourceID", type text}, {"Note", type text}, {"ValueSARm", type number}, {"ValueUSDm", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "bec510bf3b8069e7f51c",
+  "position": {
+    "x": 24,
+    "y": 466,
+    "z": 5000,
+    "height": 230,
+    "width": 1232,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sources"
+                    }
+                  },
+                  "Property": "SourceID"
+                }
+              },
+              "queryRef": "Sources.SourceID",
+              "displayName": "ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sources"
+                    }
+                  },
+                  "Property": "Publisher"
+                }
+              },
+              "queryRef": "Sources.Publisher",
+              "displayName": "Publisher"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sources"
+                    }
+                  },
+                  "Property": "Title"
+                }
+              },
+              "queryRef": "Sources.Title",
+              "displayName": "Title"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sources"
+                    }
+                  },
+                  "Property": "Published"
+                }
+              },
+              "queryRef": "Sources.Published",
+              "displayName": "Published"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sources"
+                    }
+                  },
+                  "Property": "URL"
+                }
+              },
+              "queryRef": "Sources.URL",
+              "displayName": "URL"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Sources"
+                  }
+                },
+                "Property": "SourceID"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Sources'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

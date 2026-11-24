@@ -1,0 +1,90 @@
+table Corridor
+	lineageTag: 88395ce4-3552-51df-a9f2-2b16d31554d2
+
+	column NodeID
+		dataType: string
+		lineageTag: 11d80cee-62b2-5e46-b3ee-08a946ef078e
+		summarizeBy: none
+		sourceColumn: NodeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sequence
+		dataType: int64
+		formatString: 0
+		lineageTag: 73a280be-1367-530e-8426-2c411be1cd9b
+		summarizeBy: none
+		sourceColumn: Sequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column Node
+		dataType: string
+		lineageTag: 1644ff5c-3951-53ff-b6e4-8a95634599d8
+		summarizeBy: none
+		sourceColumn: Node
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 0bc7619c-1bdc-5847-833f-c6987a894240
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Role
+		dataType: string
+		lineageTag: f98c6228-632f-5d81-a57e-0b19a2643e4f
+		summarizeBy: none
+		sourceColumn: Role
+
+		annotation SummarizationSetBy = Automatic
+
+	column OnwardMode
+		dataType: string
+		lineageTag: 53b0fa94-f447-5157-85a0-f0a7e53136f3
+		summarizeBy: none
+		sourceColumn: OnwardMode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Latitude
+		dataType: double
+		dataCategory: Latitude
+		lineageTag: 92c50bec-0c23-5534-9bee-8d24f127dcfe
+		summarizeBy: none
+		sourceColumn: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column Longitude
+		dataType: double
+		dataCategory: Longitude
+		lineageTag: ba5b82bb-6031-5931-8606-802beb8779d1
+		summarizeBy: none
+		sourceColumn: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: e525755d-4ab5-574a-a976-6e745edd1a37
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Corridor = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCorridor",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"NodeID", "Sequence", "Node", "Country", "Role", "OnwardMode", "Latitude", "Longitude", "SourceID"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"NodeID", type text}, {"Sequence", Int64.Type}, {"Node", type text}, {"Country", type text}, {"Role", type text}, {"OnwardMode", type text}, {"Latitude", type number}, {"Longitude", type number}, {"SourceID", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

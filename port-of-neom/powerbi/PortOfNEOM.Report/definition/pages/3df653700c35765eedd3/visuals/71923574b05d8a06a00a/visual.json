@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "71923574b05d8a06a00a",
+  "position": {
+    "x": 335.0,
+    "y": 92,
+    "z": 3000,
+    "height": 96,
+    "width": 299.0,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "VesselCalls"
+                    }
+                  },
+                  "Property": "RoRo Calls (Sep 2026)"
+                }
+              },
+              "queryRef": "VesselCalls.RoRo Calls (Sep 2026)",
+              "displayName": "RoRo calls, September 2026"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

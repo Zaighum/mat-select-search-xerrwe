@@ -1,0 +1,76 @@
+table Timeline
+	lineageTag: c4917c63-1181-50b3-b4bd-98f3e79407cd
+
+	measure 'Events' = COUNTROWS(Timeline)
+		formatString: 0
+		lineageTag: 2752368b-cd4d-5966-a987-e36eca68ecc0
+
+	column EventID
+		dataType: string
+		lineageTag: 4aad10a7-32e1-5592-8b36-d9bd9627f549
+		summarizeBy: none
+		sourceColumn: EventID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EventDate
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 91b2a7bd-ca0c-57e2-95cd-ee5c8b515c9c
+		summarizeBy: none
+		sourceColumn: EventDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column DatePrecision
+		dataType: string
+		lineageTag: a8434418-5034-5d68-8e44-690fa836aa56
+		summarizeBy: none
+		sourceColumn: DatePrecision
+
+		annotation SummarizationSetBy = Automatic
+
+	column Event
+		dataType: string
+		lineageTag: e84eec3d-9480-50f1-ab24-3de598c99996
+		summarizeBy: none
+		sourceColumn: Event
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 802abb06-e661-5a98-b890-a26782bc2987
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: d32a0db9-7b99-53e1-a48d-86638293f92e
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: 71454249-8734-5128-9678-3e957609740b
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Timeline = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblTimeline",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"EventID", "EventDate", "DatePrecision", "Event", "Category", "Status", "SourceID"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"EventID", type text}, {"EventDate", type date}, {"DatePrecision", type text}, {"Event", type text}, {"Category", type text}, {"Status", type text}, {"SourceID", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

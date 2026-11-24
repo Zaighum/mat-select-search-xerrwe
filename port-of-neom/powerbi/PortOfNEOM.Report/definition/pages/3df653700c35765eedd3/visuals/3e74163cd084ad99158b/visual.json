@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "3e74163cd084ad99158b",
+  "position": {
+    "x": 957.0,
+    "y": 92,
+    "z": 5000,
+    "height": 96,
+    "width": 299.0,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CapacityPlan"
+                    }
+                  },
+                  "Property": "Phase 1 % of Saudi Volume"
+                }
+              },
+              "queryRef": "CapacityPlan.Phase 1 % of Saudi Volume",
+              "displayName": "T1 Phase 1 as % of Saudi port TEU"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

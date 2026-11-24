@@ -1,0 +1,147 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "a0aa05a1bc08d3c577f2",
+  "position": {
+    "x": 24,
+    "y": 174,
+    "z": 4000,
+    "height": 280,
+    "width": 1232,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "EventDate"
+                }
+              },
+              "queryRef": "Timeline.EventDate",
+              "displayName": "Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "DatePrecision"
+                }
+              },
+              "queryRef": "Timeline.DatePrecision",
+              "displayName": "Precision"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "Event"
+                }
+              },
+              "queryRef": "Timeline.Event",
+              "displayName": "Event"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "Category"
+                }
+              },
+              "queryRef": "Timeline.Category",
+              "displayName": "Category"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "Status"
+                }
+              },
+              "queryRef": "Timeline.Status",
+              "displayName": "Status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeline"
+                    }
+                  },
+                  "Property": "SourceID"
+                }
+              },
+              "queryRef": "Timeline.SourceID",
+              "displayName": "Source"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Timeline"
+                  }
+                },
+                "Property": "EventDate"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Timeline of key events'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

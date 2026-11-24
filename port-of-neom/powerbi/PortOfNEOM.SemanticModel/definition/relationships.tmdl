@@ -1,0 +1,31 @@
+relationship 0b3273ac-1259-5de2-8f8a-03480b57d32f
+	fromColumn: PortProfile.SourceID
+	toColumn: Sources.SourceID
+
+relationship 8dee9146-a39d-5e77-a63a-1a59dc7a908d
+	fromColumn: Timeline.SourceID
+	toColumn: Sources.SourceID
+
+relationship 80455fad-0258-5815-82fc-001ae0d67f8c
+	fromColumn: CapacityPlan.SourceID
+	toColumn: Sources.SourceID
+
+relationship 3864bcb9-71ef-5b2b-8de2-b6a88128e5fb
+	fromColumn: Equipment.SourceID
+	toColumn: Sources.SourceID
+
+relationship 0ae8f3b9-a62a-589f-9d9a-a8a88b014f39
+	fromColumn: Contracts.SourceID
+	toColumn: Sources.SourceID
+
+relationship e565334a-23d2-55da-9d21-450d5a03dc97
+	fromColumn: Investment.SourceID
+	toColumn: Sources.SourceID
+
+relationship 62ca04ea-fe14-5bd2-9dd8-caa477d6d44e
+	fromColumn: VesselCalls.SourceID
+	toColumn: Sources.SourceID
+
+relationship c720ed49-b3ec-5358-b2a1-173bacf29713
+	fromColumn: Corridor.SourceID
+	toColumn: Sources.SourceID

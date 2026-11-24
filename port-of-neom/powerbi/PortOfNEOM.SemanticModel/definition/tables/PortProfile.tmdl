@@ -1,0 +1,98 @@
+table PortProfile
+	lineageTag: e31bd868-f6f5-5695-a7ba-86afe190a950
+
+	measure 'Quay Length (m)' = CALCULATE(MAX(PortProfile[NumericValue]), PortProfile[ProfileID] = "P04")
+		formatString: #,##0
+		lineageTag: caca96a9-6281-5629-a862-b484118ee279
+
+	measure 'Berths' = CALCULATE(MAX(PortProfile[NumericValue]), PortProfile[ProfileID] = "P05")
+		formatString: 0
+		lineageTag: ba76e95f-3e73-54e2-8d5a-ae283daf984d
+
+	measure 'Depth (m)' = CALCULATE(MAX(PortProfile[NumericValue]), PortProfile[ProfileID] = "P06")
+		formatString: 0.0
+		lineageTag: 705b4655-0427-55ea-9a1a-9c1db667a43e
+
+	measure 'Saudi Port Volume (TEU)' = CALCULATE(MAX(PortProfile[NumericValue]), PortProfile[ProfileID] = "P13")
+		formatString: #,##0
+		lineageTag: 7fa70b24-9d93-55ad-be62-265aff58cf75
+
+	measure 'Terminal 1 Status' = CALCULATE(MAX(PortProfile[Value]), PortProfile[ProfileID] = "P03")
+		lineageTag: f4bf3de6-2998-5331-8bce-23dda8b3c27f
+
+	column ProfileID
+		dataType: string
+		lineageTag: 4ee43cee-fdf1-5816-9865-12ee4d1b657b
+		summarizeBy: none
+		sourceColumn: ProfileID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 16e06ab0-8375-50d6-ab19-90bba4cc98be
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Attribute
+		dataType: string
+		lineageTag: 666d354d-958f-5351-901c-90029bdddaeb
+		summarizeBy: none
+		sourceColumn: Attribute
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		lineageTag: e5abf73b-afed-51a2-bb95-751299259882
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumericValue
+		dataType: double
+		lineageTag: e5103cfc-6707-5a85-b5fe-dd1698c109cb
+		summarizeBy: none
+		sourceColumn: NumericValue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unit
+		dataType: string
+		lineageTag: ae9154f3-8bd8-5f76-943f-4896e18f8381
+		summarizeBy: none
+		sourceColumn: Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceID
+		dataType: string
+		lineageTag: a0934648-a204-59e5-8d95-fb03619abe4d
+		summarizeBy: none
+		sourceColumn: SourceID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Note
+		dataType: string
+		lineageTag: aa31978a-24d0-5ede-8deb-bfa7e29d7be0
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	partition PortProfile = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblPortProfile",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"ProfileID", "Category", "Attribute", "Value", "NumericValue", "Unit", "SourceID", "Note"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"ProfileID", type text}, {"Category", type text}, {"Attribute", type text}, {"Value", type text}, {"NumericValue", type number}, {"Unit", type text}, {"SourceID", type text}, {"Note", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

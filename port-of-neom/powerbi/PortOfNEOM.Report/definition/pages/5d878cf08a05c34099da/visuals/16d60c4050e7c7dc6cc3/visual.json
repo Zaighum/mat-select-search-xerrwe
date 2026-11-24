@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "16d60c4050e7c7dc6cc3",
+  "position": {
+    "x": 957.0,
+    "y": 92,
+    "z": 5000,
+    "height": 96,
+    "width": 299.0,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Investment"
+                    }
+                  },
+                  "Property": "Stated Investment (USD bn)"
+                }
+              },
+              "queryRef": "Investment.Stated Investment (USD bn)",
+              "displayName": "Highest stated investment (USD bn)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
