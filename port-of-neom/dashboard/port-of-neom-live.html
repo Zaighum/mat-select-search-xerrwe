@@ -1,0 +1,528 @@
+<title>Port of NEOM Live</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one immersive sea scene behind frosted cards; left stack + right pair over the scene, a four-card strip below. Single dark-teal look by design. */
+:root {
+  color-scheme: dark;
+  --sea-deep: #062f3a;
+  --sea-mid: #0e5a69;
+  --glass: rgba(10, 44, 54, 0.66);
+  --glass-strong: rgba(8, 36, 45, 0.82);
+  --line: rgba(255, 255, 255, 0.10);
+  --ink: #f3fbfb;
+  --ink-2: #b9d6da;
+  --ink-3: #8fb4ba;
+  --lime: #d9f43b;
+  --lime-ink: #16260a;
+  --aqua: #58d6d0;
+  --coral: #ff8a6b;
+  --mist: #9fb7bb;
+  --display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --r: 22px;
+}
+html, body { background: var(--sea-deep); height: 100%; }
+body { color: var(--ink); font-family: var(--body); font-size: 14px; }
+.stage { position: relative; isolation: isolate; overflow: hidden; min-height: 100%; }
+#scene { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-block: 20px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; }
+
+/* top bar */
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.pill { background: var(--glass-strong); border: 1px solid var(--line); border-radius: 999px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.brand { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; font-family: var(--display); font-weight: 600; font-size: 16px; }
+.brand .mark { width: 36px; height: 36px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; }
+.brand small { font-family: var(--body); font-weight: 400; font-size: 12px; color: var(--ink-2); padding-left: 10px; border-left: 1px solid var(--line); }
+nav.pill { display: flex; flex-wrap: wrap; padding: 5px; gap: 2px; }
+nav button { font: 500 13px var(--body); color: var(--ink-2); background: none; border: 0; border-radius: 999px; padding: 11px 18px; cursor: pointer; }
+nav button:hover { color: var(--ink); }
+nav button[aria-selected="true"] { background: var(--lime); color: var(--lime-ink); }
+:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+.tag { padding: 11px 16px; font: 600 11px var(--mono); letter-spacing: 0.08em; color: var(--lime); }
+
+/* hero */
+.hero { display: flex; flex-direction: column; gap: 10px; padding-top: 22px; }
+.chip { align-self: flex-start; display: flex; align-items: center; gap: 8px; padding: 7px 12px; font: 600 11px var(--mono); letter-spacing: 0.06em; background: var(--glass-strong); border-radius: 999px; border: 1px solid var(--line); }
+.chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 0 rgba(217, 244, 59, 0.7); animation: pulse 2.2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(217, 244, 59, 0); } 100% { box-shadow: 0 0 0 0 rgba(217, 244, 59, 0); } }
+h1 { margin: 0; font: 500 clamp(40px, 6vw, 68px)/1 var(--display); letter-spacing: -0.035em; text-wrap: balance; text-shadow: 0 2px 24px rgba(4, 40, 50, 0.45); }
+.sub { color: #e2f3f4; font-size: 15px; text-shadow: 0 1px 12px rgba(4, 40, 50, 0.6); }
+
+/* cards */
+.card { background: var(--glass); border: 1px solid var(--line); border-radius: var(--r); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card.dark { background: var(--glass-strong); }
+.card h2 { margin: 0; font: 500 14px var(--body); color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.card h2 svg { flex: none; }
+.head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.meta { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.big { font: 500 40px/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.mid { font: 500 26px/1 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.unit { font-size: 12px; color: var(--ink-3); }
+.note { font-size: 12px; color: var(--lime); }
+.row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+
+.main { display: grid; grid-template-columns: minmax(0, 430px) minmax(0, 1fr) minmax(0, 460px); gap: 12px; align-items: end; }
+.left { display: flex; flex-direction: column; gap: 10px; }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.trio .card { padding: 14px 16px; gap: 6px; }
+.trio .lbl { font-size: 11px; color: var(--ink-3); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; grid-column: 3; }
+.strip { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 3.6fr) minmax(0, 2fr) minmax(0, 2fr); gap: 12px; }
+
+.track { position: relative; height: 22px; }
+.track .base { position: absolute; left: 0; right: 0; top: 10px; border-top: 2px dashed rgba(255, 255, 255, 0.22); }
+.track .fill { position: absolute; left: 0; top: 9px; height: 3px; border-radius: 2px; background: var(--lime); width: 0; transition: width 1.4s cubic-bezier(.2, .7, .2, 1); }
+.track .dot { position: absolute; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); transform: translateX(-50%); }
+.track .dot.end { background: #fff; }
+.ticks { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); }
+
+.seg { display: flex; gap: 3px; height: 7px; }
+.seg span { border-radius: 4px; cursor: default; }
+.legend { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.legend div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.legend .k { font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.legend .k i { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.legend .v { font: 500 20px var(--display); font-variant-numeric: tabular-nums; }
+
+.list { display: flex; flex-direction: column; }
+.list div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+.list div b { font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ok { font-size: 11px; font-weight: 600; color: var(--lime); background: rgba(217, 244, 59, 0.14); padding: 4px 10px; border-radius: 999px; }
+.chart { width: 100%; display: block; }
+.map { border-radius: 14px; overflow: hidden; background: #0a2730; }
+.hbar { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.6fr) auto; gap: 10px; align-items: center; font-size: 13px; padding: 5px 0; }
+.hbar span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+.hbar em { display: block; height: 8px; border-radius: 0 4px 4px 0; background: var(--lime); }
+.hbar b { font-weight: 500; font-variant-numeric: tabular-nums; }
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+#tip { position: fixed; z-index: 30; pointer-events: none; background: #04222a; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-size: 12px; color: var(--ink); white-space: nowrap; transform: translate(-50%, -130%); }
+.foot { font-size: 12px; color: var(--ink-2); text-shadow: 0 1px 8px rgba(4, 40, 50, 0.8); }
+
+/* entrance */
+.splash { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: linear-gradient(#8fe9e4, #2fa9b3); animation: lift 0.7s 1.1s forwards; pointer-events: none; }
+.splash div { display: flex; align-items: center; gap: 14px; font: 600 28px var(--display); color: #06303a; }
+.splash .mark { width: 54px; height: 54px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; }
+@keyframes lift { to { opacity: 0; visibility: hidden; } }
+.rise { animation: rise 0.7s cubic-bezier(.2, .7, .2, 1) backwards; animation-delay: calc(1.4s + var(--i, 0) * 70ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+@media (prefers-reduced-motion: reduce) { .splash { display: none; } .rise, .chip i { animation: none; } .track .fill { transition: none; } }
+
+@media (max-width: 1100px) {
+  .main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .pair { grid-column: 2; }
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .main, .strip { grid-template-columns: minmax(0, 1fr); }
+  .pair { grid-column: 1; }
+  .hero { padding-bottom: 150px; }
+  nav button { padding: 11px 13px; }
+}
+</style>
+
+<div class="stage">
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="splash" aria-hidden="true"><div><span class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16260a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"></path><path d="M5 12a7 7 0 0 0 14 0"></path><circle cx="12" cy="5" r="2"></circle></svg></span>Port of NEOM</div></div>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="pill brand"><span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16260a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"></path><path d="M5 12a7 7 0 0 0 14 0"></path><circle cx="12" cy="5" r="2"></circle></svg></span>Port of NEOM<small>Live ops</small></div>
+    <nav class="pill" role="tablist" aria-label="Dashboard views">
+      <button role="tab" id="tab-operations" data-view="operations" aria-selected="true">Operations</button>
+      <button role="tab" id="tab-commercial" data-view="commercial" aria-selected="false">Commercial</button>
+      <button role="tab" id="tab-finance" data-view="finance" aria-selected="false">Finance</button>
+    </nav>
+    <div class="pill tag">SAMPLE DATA</div>
+  </header>
+
+  <!-- ================= OPERATIONS ================= -->
+  <section class="view" id="view-operations" role="tabpanel" aria-labelledby="tab-operations">
+    <div class="hero rise">
+      <div class="chip"><i></i>LIVE &middot; BERTH 3 &middot; VOY NRS-2291</div>
+      <h1>MV Red Sea Pioneer</h1>
+      <div class="sub">Alongside Berth 3 &middot; Safaga shuttle and general cargo &middot; 12,400 t on board</div>
+    </div>
+    <div class="main">
+      <div class="left">
+        <div class="trio">
+          <div class="card rise" style="--i:1"><span class="lbl">At berth</span><div class="row"><span class="mid">4</span><span class="unit">of 5</span></div></div>
+          <div class="card rise" style="--i:2"><span class="lbl">At anchorage</span><div class="row"><span class="mid">6</span><span class="unit">vessels</span></div></div>
+          <div class="card rise" style="--i:3"><span class="lbl">Gate, trucks/h</span><div class="row"><span class="mid" id="gate">142</span></div></div>
+        </div>
+        <div class="card rise" style="--i:4">
+          <div class="head"><h2>Discharge progress</h2><span class="meta">3,470 t to go</span></div>
+          <div class="row"><span class="big">72%</span><span class="note">Completes today, 21:40</span></div>
+          <div class="track" role="img" aria-label="Discharge 72 percent complete">
+            <div class="base"></div><div class="fill" id="fill"></div>
+            <span class="dot" style="left:0"></span><span class="dot" style="left:28%"></span><span class="dot" style="left:72%"></span><span class="dot end" style="left:100%"></span>
+          </div>
+          <div class="ticks"><span>Start 06:10</span><span>Shift change</span><span>Now</span><span>Sail</span></div>
+        </div>
+        <div class="card rise" style="--i:5">
+          <div class="head"><h2>Cargo on the quay today</h2><span class="meta">18,840 t</span></div>
+          <div class="seg" id="seg"></div>
+          <div class="legend" id="segLegend"></div>
+        </div>
+      </div>
+      <div class="pair">
+        <div class="card dark rise" style="--i:6">
+          <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="7" height="5"></rect><rect x="12" y="8" width="7" height="5"></rect><rect x="7" y="14" width="7" height="5"></rect></svg>Yard utilisation</h2>
+          <svg class="chart" id="gauge" viewBox="0 0 200 118" role="img" aria-label="Yard utilisation gauge at 68 percent"></svg>
+          <div class="row"><span class="mid">68%</span><span class="unit">20,400 of 30,000 slots</span></div>
+        </div>
+        <div class="card dark rise" style="--i:7">
+          <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5h12l4 4"></path><path d="M16 5v16"></path><path d="M16 12h-4"></path></svg>Crane moves per hour</h2>
+          <svg class="chart" id="moves" viewBox="0 0 200 118" role="img" aria-label="Bar chart of crane moves in each of the last 20 hours"></svg>
+          <div class="row"><span class="mid" id="movesNow">22.4</span><span class="note">+6% vs plan</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="strip">
+      <div class="card dark rise" style="--i:8">
+        <div class="head"><h2>Land bridge to the Gulf</h2><span class="meta">Day 2 of 5 &middot; 1,180 km</span></div>
+        <svg class="chart map" id="route" viewBox="0 0 520 170" role="img" aria-label="Route map from Safaga across the Red Sea to Port of NEOM, then by road to the Arar border and on to Iraq and the Gulf"></svg>
+      </div>
+      <div class="card dark rise" style="--i:9">
+        <div class="head"><h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"></path><path d="M5 12a7 7 0 0 0 14 0"></path><circle cx="12" cy="5" r="2"></circle></svg>Next berth window &middot; Berth 2</h2><span class="ok">Confirmed</span></div>
+        <div class="mid">Nov 25 &middot; 06:00 &ndash; 14:00</div>
+        <div class="list">
+          <div><span>Mobile harbour cranes assigned</span><b>3</b></div>
+          <div><span>Trucks pre-booked</span><b>186</b></div>
+          <div><span>Pilot on board</span><b>05:15</b></div>
+        </div>
+      </div>
+      <div class="card dark rise" style="--i:10">
+        <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 9h11a3 3 0 1 0-3-3"></path><path d="M3 15h15a3 3 0 1 1-3 3"></path></svg>Wind</h2>
+        <svg class="chart" id="wind" viewBox="0 0 140 110" role="img" aria-label="Wind compass, 14 knots from the north-west"></svg>
+        <div class="row"><span class="mid">14 kn</span><span class="unit">from NW</span></div>
+      </div>
+      <div class="card dark rise" style="--i:11">
+        <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 8c3-3 6 3 9 0s6 3 9 0"></path><path d="M3 15c3-3 6 3 9 0s6 3 9 0"></path></svg>Sea state</h2>
+        <svg class="chart" id="sea" viewBox="0 0 140 110" role="img" aria-label="Wave height 0.9 metres against a 2.5 metre working limit"></svg>
+        <div class="row"><span class="mid">0.9 m</span><span class="unit">Beaufort 4</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMMERCIAL ================= -->
+  <section class="view" id="view-commercial" role="tabpanel" aria-labelledby="tab-commercial" hidden>
+    <div class="hero">
+      <div class="chip"><i></i>COMMERCIAL &middot; 2026 TO OCTOBER</div>
+      <h1>Customers and cargo</h1>
+      <div class="sub">Who pays, for what, and at what yield</div>
+    </div>
+    <div class="main">
+      <div class="left">
+        <div class="trio">
+          <div class="card"><span class="lbl">Cargo revenue</span><div class="row"><span class="mid">254.9</span><span class="unit">SAR m</span></div></div>
+          <div class="card"><span class="lbl">Yield</span><div class="row"><span class="mid">46.3</span><span class="unit">SAR/t</span></div></div>
+          <div class="card"><span class="lbl">Customers</span><div class="row"><span class="mid">11</span><span class="unit">active</span></div></div>
+        </div>
+        <div class="card">
+          <div class="head"><h2>Revenue by stream</h2><span class="meta">SAR million</span></div>
+          <div class="seg" id="streamSeg"></div>
+          <div class="legend" id="streamLegend" style="grid-template-columns: repeat(3, minmax(0, 1fr))"></div>
+        </div>
+        <div class="card">
+          <div class="head"><h2>Revenue by cargo type</h2><span class="meta">SAR million</span></div>
+          <div id="cargoBars"></div>
+        </div>
+      </div>
+      <div class="pair" style="grid-template-columns: minmax(0, 1fr)">
+        <div class="card dark">
+          <div class="head"><h2>Top customers</h2><span class="meta">SAR million, year to date</span></div>
+          <div id="custBars"></div>
+          <div class="unit">Top five customers bring 82% of cargo revenue.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINANCE ================= -->
+  <section class="view" id="view-finance" role="tabpanel" aria-labelledby="tab-finance" hidden>
+    <div class="hero">
+      <div class="chip"><i></i>FINANCE &middot; 2026 TO OCTOBER</div>
+      <h1>Ahead of budget</h1>
+      <div class="sub">Revenue 6.9% over plan, margins thin, capital spend running late</div>
+    </div>
+    <div class="main">
+      <div class="left">
+        <div class="kpis">
+          <div class="card"><span class="unit">Revenue</span><div class="row"><span class="mid">272.3</span><span class="unit">SAR m</span></div><span class="note">+17.6 vs budget</span></div>
+          <div class="card"><span class="unit">EBITDA</span><div class="row"><span class="mid">21.2</span><span class="unit">SAR m</span></div><span class="note">7.8% margin</span></div>
+          <div class="card"><span class="unit">Operating costs</span><div class="row"><span class="mid">251.1</span><span class="unit">SAR m</span></div><span class="unit">+11.0 vs budget</span></div>
+          <div class="card"><span class="unit">Capex</span><div class="row"><span class="mid">834</span><span class="unit">SAR m</span></div><span class="unit">+283 vs budget</span></div>
+        </div>
+        <div class="card">
+          <div class="head"><h2>Outlook, base case</h2><span class="meta">EBITDA, SAR million</span></div>
+          <div class="list">
+            <div><span>2027 &middot; 105,000 TEU</span><b>-107</b></div>
+            <div><span>2029 &middot; 315,000 TEU</span><b>-1</b></div>
+            <div><span>2031 &middot; 675,000 TEU</span><b>+198</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="pair" style="grid-template-columns: minmax(0, 1fr)">
+        <div class="card dark">
+          <div class="head"><h2>Monthly revenue against budget</h2><span class="meta">SAR million, 2026</span></div>
+          <svg class="chart" id="revLine" viewBox="0 0 420 190" role="img" aria-label="Line chart of 2026 monthly revenue against budget. Actual runs above budget from March."></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Sample data for design review. Figures are illustrative and are not actual Port of NEOM results.</div>
+</div>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function el(parent, tag, attrs, text) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    parent.appendChild(n);
+    return n;
+  }
+  function $(id) { return document.getElementById(id); }
+  var tip = $('tip');
+  function hover(node, text) {
+    node.addEventListener('pointerenter', function () { tip.textContent = text; tip.hidden = false; });
+    node.addEventListener('pointermove', function (e) { tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; });
+    node.addEventListener('pointerleave', function () { tip.hidden = true; });
+  }
+  var css = getComputedStyle(document.documentElement);
+  function tok(n) { return css.getPropertyValue(n).trim(); }
+  var LIME = tok('--lime'), AQUA = tok('--aqua'), CORAL = tok('--coral'), MIST = tok('--mist'), INK3 = tok('--ink-3');
+
+  /* ---------- segmented bars ---------- */
+  function segments(barId, legendId, items, unit) {
+    var bar = $(barId), legend = $(legendId);
+    items.forEach(function (d) {
+      var s = document.createElement('span');
+      s.style.flex = d.v + ' 1 0';
+      s.style.background = d.c;
+      hover(s, d.k + ': ' + d.label + ' ' + unit);
+      bar.appendChild(s);
+      var cell = document.createElement('div');
+      cell.innerHTML = '<span class="k"><i style="background:' + d.c + '"></i>' + d.k + '</span><span class="v">' + d.label + '</span>';
+      legend.appendChild(cell);
+    });
+  }
+  segments('seg', 'segLegend', [
+    { k: 'General', v: 9840, label: '9,840', c: LIME }, { k: 'Bulk', v: 6420, label: '6,420', c: AQUA },
+    { k: 'Project', v: 2160, label: '2,160', c: CORAL }, { k: 'RoRo', v: 420, label: '420', c: MIST }], 't');
+  segments('streamSeg', 'streamLegend', [
+    { k: 'Handling', v: 200.8, label: '200.8', c: LIME }, { k: 'Marine', v: 44.3, label: '44.3', c: AQUA },
+    { k: 'Storage', v: 9.8, label: '9.8', c: CORAL }], 'SAR m');
+
+  function hbars(id, rows) {
+    var max = Math.max.apply(null, rows.map(function (r) { return r[1]; }));
+    rows.forEach(function (r) {
+      var d = document.createElement('div');
+      d.className = 'hbar';
+      d.innerHTML = '<span>' + r[0] + '</span><span><em style="width:' + Math.max(1.5, r[1] / max * 100) + '%"></em></span><b>' + r[1].toFixed(1) + '</b>';
+      $(id).appendChild(d);
+    });
+  }
+  hbars('cargoBars', [['General cargo', 134.5], ['Project cargo', 75.7], ['Dry bulk', 23.7], ['RoRo', 19.7], ['Container', 1.4]]);
+  hbars('custBars', [['Construction Logistics Co. A', 52.5], ['Steel & Materials Importer B', 46.8], ['Heavy-Lift Project Forwarder D', 41.5],
+    ['Regional Freight Forwarder C', 35.2], ['Energy EPC Contractor E', 34.2], ['Cement & Aggregates Trader F', 14.2],
+    ['Red Sea Ferry Operator H', 13.5], ['Grain Importer G', 9.5]]);
+
+  /* ---------- gauge ---------- */
+  (function () {
+    var g = $('gauge'), cx = 100, cy = 104, r = 78, n = 46, pct = 0.68;
+    for (var i = 0; i < n; i++) {
+      var a = Math.PI * (1 - i / (n - 1)), on = i / (n - 1) <= pct;
+      el(g, 'line', { x1: cx + Math.cos(a) * (r - 16), y1: cy - Math.sin(a) * (r - 16), x2: cx + Math.cos(a) * r, y2: cy - Math.sin(a) * r,
+        stroke: on ? LIME : 'rgba(255,255,255,0.16)', 'stroke-width': 2.6, 'stroke-linecap': 'round' });
+    }
+    var na = Math.PI * (1 - pct);
+    el(g, 'line', { x1: cx, y1: cy, x2: cx + Math.cos(na) * (r - 24), y2: cy - Math.sin(na) * (r - 24), stroke: LIME, 'stroke-width': 1.6 });
+    el(g, 'circle', { cx: cx, cy: cy, r: 3.5, fill: LIME });
+    el(g, 'text', { x: cx - r, y: 116, fill: INK3, 'font-size': 9, 'text-anchor': 'middle' }, '0');
+    el(g, 'text', { x: cx + r, y: 116, fill: INK3, 'font-size': 9, 'text-anchor': 'middle' }, '100');
+  })();
+
+  /* ---------- crane moves bars ---------- */
+  (function () {
+    var s = $('moves'), data = [14.2, 16.8, 15.1, 19.4, 17.6, 12.3, 18.8, 20.1, 16.4, 21.2, 19.7, 15.9, 18.2, 22.9, 20.4, 17.1, 19.9, 23.6, 21.0, 22.4];
+    var w = 200 / data.length, max = 26;
+    data.forEach(function (v, i) {
+      var h = v / max * 100, last = i === data.length - 1;
+      var hit = el(s, 'rect', { x: i * w, y: 4, width: w, height: 108, fill: 'transparent' });
+      var bar = el(s, 'rect', { x: i * w + w / 2 - (last ? 1.6 : 1), y: 110 - h, width: last ? 3.2 : 2, height: h, rx: 1,
+        fill: last ? LIME : 'rgba(190,225,228,0.34)' });
+      hover(hit, (data.length - 1 - i === 0 ? 'This hour' : (data.length - 1 - i) + ' h ago') + ': ' + v.toFixed(1) + ' moves');
+      hit.addEventListener('pointerenter', function () { bar.setAttribute('fill', LIME); });
+      hit.addEventListener('pointerleave', function () { bar.setAttribute('fill', last ? LIME : 'rgba(190,225,228,0.34)'); });
+    });
+  })();
+
+  /* ---------- route map ---------- */
+  (function () {
+    var s = $('route');
+    el(s, 'rect', { x: 0, y: 0, width: 520, height: 170, fill: '#0a2730' });
+    for (var i = 1; i < 13; i++) el(s, 'line', { x1: i * 40, y1: 0, x2: i * 40 - 30, y2: 170, stroke: 'rgba(255,255,255,0.045)', 'stroke-width': 1 });
+    for (var j = 1; j < 5; j++) el(s, 'line', { x1: 0, y1: j * 34, x2: 520, y2: j * 34 + 12, stroke: 'rgba(255,255,255,0.045)', 'stroke-width': 1 });
+    el(s, 'path', { d: 'M96 0 C120 50 150 96 196 170 L132 170 C104 110 80 60 62 0 Z', fill: 'rgba(88,214,208,0.10)' });
+    el(s, 'text', { x: 112, y: 160, fill: INK3, 'font-size': 10 }, 'Red Sea');
+    var done = el(s, 'path', { d: 'M70 118 L168 74 L250 58', fill: 'none', stroke: LIME, 'stroke-width': 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+    el(s, 'path', { d: 'M250 58 L372 34 L470 96', fill: 'none', stroke: 'rgba(255,255,255,0.42)', 'stroke-width': 2, 'stroke-dasharray': '2 6', 'stroke-linecap': 'round' });
+    if (!reduce) {
+      var len = done.getTotalLength();
+      done.setAttribute('stroke-dasharray', len);
+      done.setAttribute('stroke-dashoffset', len);
+      done.style.transition = 'stroke-dashoffset 2s 1.9s ease-out';
+      requestAnimationFrame(function () { requestAnimationFrame(function () { done.setAttribute('stroke-dashoffset', 0); }); });
+    }
+    [[70, 118, 'Safaga', LIME, 'Egypt, RoRo departure', 8, 16], [168, 74, 'Port of NEOM', LIME, 'Gateway hub', -30, -12],
+     [250, 58, 'Now', LIME, 'Convoy position, 64 trucks', 8, -10], [372, 34, 'Arar border', '#fff', 'Saudi Arabia / Iraq', -26, -10],
+     [470, 96, 'Gulf markets', '#fff', 'Iraq, Kuwait, UAE, Oman', -62, 20]].forEach(function (p, i) {
+      if (i === 2) el(s, 'circle', { cx: p[0], cy: p[1], r: 12, fill: 'rgba(217,244,59,0.18)' });
+      var c = el(s, 'circle', { cx: p[0], cy: p[1], r: 4.5, fill: p[3], stroke: '#0a2730', 'stroke-width': 2 });
+      el(s, 'text', { x: p[0] + p[5], y: p[1] + p[6], fill: '#f3fbfb', 'font-size': 11, 'font-weight': 500 }, p[2]);
+      var hit = el(s, 'circle', { cx: p[0], cy: p[1], r: 16, fill: 'transparent' });
+      hover(hit, p[2] + ': ' + p[4]);
+    });
+  })();
+
+  /* ---------- wind compass ---------- */
+  (function () {
+    var s = $('wind'), cx = 70, cy = 55, r = 42;
+    el(s, 'circle', { cx: cx, cy: cy, r: r, fill: 'rgba(217,244,59,0.20)' });
+    el(s, 'circle', { cx: cx, cy: cy, r: r * 0.62, fill: 'none', stroke: 'rgba(255,255,255,0.10)' });
+    var a0 = (-135 - 22) * Math.PI / 180, a1 = (-135 + 22) * Math.PI / 180;
+    el(s, 'path', { d: 'M' + cx + ' ' + cy + ' L' + (cx + Math.cos(a0) * r) + ' ' + (cy + Math.sin(a0) * r) + ' A' + r + ' ' + r + ' 0 0 1 ' + (cx + Math.cos(a1) * r) + ' ' + (cy + Math.sin(a1) * r) + ' Z', fill: LIME });
+    el(s, 'circle', { cx: cx, cy: cy, r: 3, fill: '#f3fbfb' });
+    [['N', cx, cy - r - 4], ['E', cx + r + 7, cy + 3], ['S', cx, cy + r + 10], ['W', cx - r - 7, cy + 3]].forEach(function (t) {
+      el(s, 'text', { x: t[1], y: t[2], fill: INK3, 'font-size': 8, 'text-anchor': 'middle' }, t[0]);
+    });
+  })();
+
+  /* ---------- sea state ---------- */
+  var waves = (function () {
+    var s = $('sea');
+    el(s, 'line', { x1: 4, y1: 22, x2: 136, y2: 22, stroke: LIME, 'stroke-width': 1, 'stroke-dasharray': '3 4' });
+    el(s, 'text', { x: 4, y: 15, fill: LIME, 'font-size': 8.5, 'font-family': 'JetBrains Mono, monospace' }, 'Limit 2.5 m');
+    var a = el(s, 'path', { fill: 'none', stroke: '#f3fbfb', 'stroke-width': 2, 'stroke-linecap': 'round' });
+    var b = el(s, 'path', { fill: 'none', stroke: 'rgba(255,255,255,0.3)', 'stroke-width': 1.6, 'stroke-linecap': 'round' });
+    return function (t) {
+      function d(ph, y0) { var p = ''; for (var x = 4; x <= 136; x += 4) p += (x === 4 ? 'M' : 'L') + x + ' ' + (y0 + Math.sin(x / 13 + ph) * 9).toFixed(1); return p; }
+      a.setAttribute('d', d(t, 62)); b.setAttribute('d', d(t + 1.4, 74));
+    };
+  })();
+
+  /* ---------- finance line ---------- */
+  (function () {
+    var s = $('revLine'), act = [26.0, 25.3, 29.0, 30.0, 28.4, 28.0, 29.0, 26.0, 26.2, 24.3], bud = [26.6, 27.1, 26.9, 27.0, 26.2, 25.8, 24.8, 24.1, 23.3, 23.1];
+    var mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'], L = 30, R = 410, T = 14, B = 160, lo = 22, hi = 31;
+    function X(i) { return L + i * (R - L) / 9; } function Y(v) { return B - (v - lo) / (hi - lo) * (B - T); }
+    [22, 25, 28, 31].forEach(function (v) {
+      el(s, 'line', { x1: L, y1: Y(v), x2: R, y2: Y(v), stroke: 'rgba(255,255,255,0.08)' });
+      el(s, 'text', { x: L - 6, y: Y(v) + 3, fill: INK3, 'font-size': 9, 'text-anchor': 'end' }, v);
+    });
+    function path(a) { return a.map(function (v, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); }).join(' '); }
+    el(s, 'path', { d: path(bud), fill: 'none', stroke: 'rgba(255,255,255,0.55)', 'stroke-width': 1.8, 'stroke-dasharray': '4 4' });
+    el(s, 'path', { d: path(act), fill: 'none', stroke: LIME, 'stroke-width': 2.4, 'stroke-linejoin': 'round' });
+    el(s, 'text', { x: X(3) + 6, y: Y(30) - 6, fill: '#f3fbfb', 'font-size': 10 }, 'Actual 30.0');
+    el(s, 'text', { x: X(7) - 8, y: Y(24.1) + 16, fill: '#b9d6da', 'font-size': 10, 'text-anchor': 'end' }, 'Budget');
+    mon.forEach(function (m, i) {
+      el(s, 'text', { x: X(i), y: 178, fill: INK3, 'font-size': 9, 'text-anchor': 'middle' }, m);
+      el(s, 'circle', { cx: X(i), cy: Y(act[i]), r: 3, fill: LIME, stroke: '#08242d', 'stroke-width': 1.5 });
+      var hit = el(s, 'rect', { x: X(i) - 19, y: T, width: 38, height: B - T, fill: 'transparent' });
+      hover(hit, m + ': actual ' + act[i].toFixed(1) + ', budget ' + bud[i].toFixed(1));
+    });
+  })();
+
+  /* ---------- tabs ---------- */
+  var tabs = [].slice.call(document.querySelectorAll('nav button'));
+  function show(name) {
+    if (!$('view-' + name)) name = 'operations';
+    tabs.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.view === name ? 'true' : 'false'); });
+    [].forEach.call(document.querySelectorAll('.view'), function (v) { v.hidden = v.id !== 'view-' + name; });
+    requestAnimationFrame(resize);
+  }
+  tabs.forEach(function (b) { b.addEventListener('click', function () { location.hash = b.dataset.view; show(b.dataset.view); }); });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+
+  /* ---------- hero scene (canvas) ---------- */
+  var cv = $('scene'), ctx = cv.getContext('2d'), W = 0, H = 0;
+  var glints = []; for (var gi = 0; gi < 90; gi++) glints.push([Math.random(), Math.random(), Math.random() * 6.28, 8 + Math.random() * 40]);
+  var boxes = []; var pal = ['#1f5d73', '#2b7c8c', '#16384a', '#8a3a40', '#3f8f9a', '#d3e2e3', '#245064', '#a8473f'];
+  for (var bx = 0; bx < 9; bx++) { var tiers = 2 + Math.floor(Math.random() * 3), col = []; for (var t = 0; t < tiers; t++) col.push(pal[Math.floor(Math.random() * pal.length)]); boxes.push(col); }
+  function resize() {
+    var st = cv.parentNode, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = st.clientWidth; H = st.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw(performance.now() / 1000);
+  }
+  function crane(x, y, s, a) {
+    ctx.strokeStyle = 'rgba(12,70,82,' + a + ')'; ctx.lineWidth = Math.max(1, s * 0.05); ctx.beginPath();
+    ctx.moveTo(x, y); ctx.lineTo(x, y - s); ctx.moveTo(x + s * 0.34, y); ctx.lineTo(x + s * 0.34, y - s);
+    ctx.moveTo(x - s * 0.5, y - s * 0.86); ctx.lineTo(x + s * 0.95, y - s * 0.86);
+    ctx.moveTo(x + s * 0.17, y - s * 1.3); ctx.lineTo(x - s * 0.5, y - s * 0.86); ctx.moveTo(x + s * 0.17, y - s * 1.3); ctx.lineTo(x + s * 0.95, y - s * 0.86);
+    ctx.moveTo(x + s * 0.17, y - s); ctx.lineTo(x + s * 0.17, y - s * 1.3); ctx.stroke();
+  }
+  function draw(t) {
+    if (!W) return;
+    var hz = Math.max(330, Math.min(H * 0.50, 470)), g = ctx.createLinearGradient(0, 0, 0, hz);
+    g.addColorStop(0, '#8fe9e4'); g.addColorStop(0.55, '#55c9cc'); g.addColorStop(1, '#2b9fab');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, hz);
+    g = ctx.createLinearGradient(0, hz, 0, H);
+    g.addColorStop(0, '#2a9aa6'); g.addColorStop(0.3, '#12687a'); g.addColorStop(1, '#062f3a');
+    ctx.fillStyle = g; ctx.fillRect(0, hz, W, H - hz);
+    // distant quay and cranes in the haze
+    for (var c = 0; c < 5; c++) crane(W * (0.60 + c * 0.075), hz + 2, 52 - c * 4, 0.20 + c * 0.03);
+    ctx.fillStyle = 'rgba(12,70,82,0.22)'; ctx.fillRect(W * 0.55, hz - 3, W * 0.45, 6);
+    for (var l = 0; l < 7; l++) { ctx.fillStyle = 'rgba(255,214,150,0.75)'; ctx.fillRect(W * (0.58 + l * 0.06), hz - 6, 2.4, 2.4); }
+    // ship
+    var L = Math.min(W * 0.58, 900), u = L / 100, sx = Math.max(W * 0.30, W - L - W * 0.07), wy = hz + Math.min(H * 0.10, 90) + (reduce ? 0 : Math.sin(t * 0.7) * 1.6);
+    function P(x, y) { return [sx + x * u, wy + y * u]; }
+    function poly(pts, fill) { ctx.beginPath(); pts.forEach(function (p, i) { var q = P(p[0], p[1]); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); }
+    ctx.fillStyle = 'rgba(4,34,44,0.38)'; ctx.beginPath(); ctx.ellipse(sx + 48 * u, wy + 3.5 * u, 50 * u, 4.2 * u, 0, 0, 6.3); ctx.fill();
+    poly([[10, -11], [24, -11], [24, -24], [10, -24]], '#dcecec');
+    poly([[12, -24], [22, -24], [22, -29], [12, -29]], '#c4dadb');
+    poly([[15, -29], [19, -29], [19, -34], [15, -34]], '#16384a');
+    for (var wr = 0; wr < 3; wr++) for (var wc = 0; wc < 5; wc++) { ctx.fillStyle = 'rgba(255,196,110,' + (0.75 + 0.2 * Math.sin(t + wr + wc)) + ')'; var q = P(11.5 + wc * 2.4, -22 + wr * 3.6); ctx.fillRect(q[0], q[1], 1.3 * u, 1.3 * u); }
+    boxes.forEach(function (col, i) { col.forEach(function (cc, k) { var q = P(28 + i * 5.6, -11 - (k + 1) * 3.3); ctx.fillStyle = cc; ctx.fillRect(q[0], q[1], 5.2 * u, 3.0 * u); ctx.fillStyle = 'rgba(0,0,0,0.16)'; ctx.fillRect(q[0], q[1] + 2.5 * u, 5.2 * u, 0.5 * u); }); });
+    var m = P(84, -11); ctx.strokeStyle = '#123848'; ctx.lineWidth = Math.max(1.5, u * 0.5); ctx.beginPath(); ctx.moveTo(m[0], m[1]); ctx.lineTo(m[0], m[1] - 20 * u); ctx.moveTo(m[0] - 3 * u, m[1] - 15 * u); ctx.lineTo(m[0] + 3 * u, m[1] - 15 * u); ctx.stroke();
+    poly([[1, -11], [80, -11], [100, -17], [93, 0], [4, 0]], '#12303f');
+    poly([[3.2, -2.6], [94.2, -2.6], [93, 0], [4, 0]], '#8f2f35');
+    poly([[1, -11], [80, -11], [100, -17], [99.4, -15.6], [80, -9.8], [1.3, -9.8]], '#1c4658');
+    // reflections of the lit bridge
+    for (var r = 0; r < 4; r++) { ctx.fillStyle = 'rgba(255,190,110,' + (0.10 + 0.05 * Math.sin(t * 1.3 + r)) + ')'; var rq = P(12 + r * 3, 1.5); ctx.fillRect(rq[0], rq[1], 1.6 * u, 16 * u); }
+    // glints on the water
+    glints.forEach(function (gl) {
+      var y = hz + 6 + gl[1] * (H - hz - 6), a = 0.05 + 0.10 * (0.5 + 0.5 * Math.sin(t * 1.1 + gl[2]));
+      ctx.fillStyle = 'rgba(200,250,248,' + a + ')'; ctx.fillRect(gl[0] * W, y, gl[3] * (0.5 + gl[1]), 1.2);
+    });
+    // haze and legibility shading
+    g = ctx.createLinearGradient(0, hz - 70, 0, hz + 50); g.addColorStop(0, 'rgba(180,240,238,0)'); g.addColorStop(0.5, 'rgba(180,240,238,0.30)'); g.addColorStop(1, 'rgba(180,240,238,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, hz - 70, W, 120);
+    g = ctx.createLinearGradient(0, 0, W * 0.5, 0); g.addColorStop(0, 'rgba(6,58,70,0.50)'); g.addColorStop(1, 'rgba(6,58,70,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W * 0.5, H);
+  }
+  function loop(ts) { var t = ts / 1000; draw(t); waves(t * 1.6); requestAnimationFrame(loop); }
+  window.addEventListener('resize', resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(cv.parentNode);
+
+  /* ---------- live sample ticks ---------- */
+  if (!reduce) setInterval(function () {
+    $('gate').textContent = 136 + Math.round(Math.random() * 14);
+    $('movesNow').textContent = (21.6 + Math.random() * 1.8).toFixed(1);
+  }, 2400);
+
+  show(location.hash.slice(1) || 'operations');
+  resize(); waves(0);
+  setTimeout(function () { $('fill').style.width = '72%'; }, reduce ? 0 : 1700);
+  if (!reduce) requestAnimationFrame(loop);
+})();
+</script>
