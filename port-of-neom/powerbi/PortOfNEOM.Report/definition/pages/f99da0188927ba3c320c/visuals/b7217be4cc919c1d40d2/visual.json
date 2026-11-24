@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "b7217be4cc919c1d40d2",
+  "position": {
+    "x": 734.8571428571429,
+    "y": 92,
+    "z": 8000,
+    "height": 96,
+    "width": 165.71428571428572,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OpsKPI"
+                    }
+                  },
+                  "Property": "Crane Moves per Hour"
+                }
+              },
+              "queryRef": "OpsKPI.Crane Moves per Hour",
+              "displayName": "Crane moves per hour"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

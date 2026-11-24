@@ -1,0 +1,97 @@
+table Operations
+	lineageTag: ba7f5860-0767-57d5-9d1a-f2f441683b49
+
+	measure 'Tonnes (k)' = SUM(Operations[Tonnes]) / 1000
+		formatString: #,##0
+		lineageTag: 29629d5e-e7d3-52fb-9289-e408236473dd
+
+	measure 'Vessel Calls' = SUM(Operations[VesselCalls])
+		formatString: #,##0
+		lineageTag: 5c562e79-89e4-5a89-a23d-af3d4ae247a2
+
+	measure 'Berth Hours' = SUM(Operations[BerthHours])
+		formatString: #,##0
+		lineageTag: ff330922-0187-5ff9-ac00-5ad5ec339419
+
+	measure 'Avg Turnaround (hrs)' = DIVIDE(SUM(Operations[BerthHours]), SUM(Operations[VesselCalls]))
+		formatString: 0.0
+		lineageTag: e9b88816-4f26-5167-af89-be02267d1756
+
+	measure 'Container TEU' = CALCULATE(SUM(Operations[Volume]), Operations[CargoType] = "Container")
+		formatString: #,##0
+		lineageTag: 550d3e83-4073-5d5a-b2cb-5c9a9d8c5e5b
+
+	measure 'RoRo Units' = CALCULATE(SUM(Operations[Volume]), Operations[CargoType] = "RoRo")
+		formatString: #,##0
+		lineageTag: 0e23c88d-156a-5e66-9ffe-45a3c664a1df
+
+	column OpsID
+		dataType: string
+		lineageTag: 222e2c8b-74a5-52cd-a6a4-251208cbd6fd
+		summarizeBy: none
+		sourceColumn: OpsID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 5d3fba44-51c1-54f1-ba5c-7c741578eebb
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column CargoType
+		dataType: string
+		lineageTag: 2c98bb0a-2f19-59ef-be3a-5c99e2a2f6c5
+		summarizeBy: none
+		sourceColumn: CargoType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Volume
+		dataType: double
+		lineageTag: addf9fb0-585c-555a-a71e-dab06d0554ce
+		summarizeBy: sum
+		sourceColumn: Volume
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselCalls
+		dataType: int64
+		formatString: 0
+		lineageTag: d921714a-5828-5d54-a4e4-7170ca6fb894
+		summarizeBy: sum
+		sourceColumn: VesselCalls
+
+		annotation SummarizationSetBy = Automatic
+
+	column BerthHours
+		dataType: double
+		lineageTag: d944ace3-edf2-514d-a09e-dd6cf7fbedc6
+		summarizeBy: sum
+		sourceColumn: BerthHours
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tonnes
+		dataType: double
+		lineageTag: 637449ad-e729-5b75-bcc8-f0aafbfb67f1
+		summarizeBy: sum
+		sourceColumn: Tonnes
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Operations = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblOperations",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"OpsID", "Month", "CargoType", "Volume", "VesselCalls", "BerthHours", "Tonnes"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"OpsID", type text}, {"Month", type date}, {"CargoType", type text}, {"Volume", type number}, {"VesselCalls", Int64.Type}, {"BerthHours", type number}, {"Tonnes", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

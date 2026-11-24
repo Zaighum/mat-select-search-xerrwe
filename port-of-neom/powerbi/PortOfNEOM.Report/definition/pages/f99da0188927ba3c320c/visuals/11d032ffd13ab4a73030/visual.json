@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "11d032ffd13ab4a73030",
+  "position": {
+    "x": 912.5714285714287,
+    "y": 92,
+    "z": 9000,
+    "height": 96,
+    "width": 165.71428571428572,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OpsKPI"
+                    }
+                  },
+                  "Property": "Truck Turn (min)"
+                }
+              },
+              "queryRef": "OpsKPI.Truck Turn (min)",
+              "displayName": "Truck turn time (min)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

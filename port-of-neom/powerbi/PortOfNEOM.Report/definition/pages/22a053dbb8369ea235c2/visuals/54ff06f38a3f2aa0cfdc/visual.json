@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "54ff06f38a3f2aa0cfdc",
+  "position": {
+    "x": 24.0,
+    "y": 92,
+    "z": 2000,
+    "height": 96,
+    "width": 195.33333333333334,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CapacityPlan"
+                    }
+                  },
+                  "Property": "T1 Phase 1 Capacity (TEU)"
+                }
+              },
+              "queryRef": "CapacityPlan.T1 Phase 1 Capacity (TEU)",
+              "displayName": "Terminal 1 Phase 1 capacity (TEU/yr)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,31 +1,67 @@
-relationship 0b3273ac-1259-5de2-8f8a-03480b57d32f
+relationship 58413133-9d03-55cd-8d58-2c55c6c9b1b4
 	fromColumn: PortProfile.SourceID
 	toColumn: Sources.SourceID
 
-relationship 8dee9146-a39d-5e77-a63a-1a59dc7a908d
+relationship 492c4892-857a-557e-a34d-d25296b77958
 	fromColumn: Timeline.SourceID
 	toColumn: Sources.SourceID
 
-relationship 80455fad-0258-5815-82fc-001ae0d67f8c
+relationship 4cc87764-3769-5d65-b5cd-53cb51015213
 	fromColumn: CapacityPlan.SourceID
 	toColumn: Sources.SourceID
 
-relationship 3864bcb9-71ef-5b2b-8de2-b6a88128e5fb
+relationship 371eb079-914f-584f-8a91-f43cfa08ba19
 	fromColumn: Equipment.SourceID
 	toColumn: Sources.SourceID
 
-relationship 0ae8f3b9-a62a-589f-9d9a-a8a88b014f39
+relationship e2516d23-9efe-5d43-979c-ac9d5e77c32f
 	fromColumn: Contracts.SourceID
 	toColumn: Sources.SourceID
 
-relationship e565334a-23d2-55da-9d21-450d5a03dc97
+relationship f20e5e88-db3c-5488-b8cd-a864474f0fb7
 	fromColumn: Investment.SourceID
 	toColumn: Sources.SourceID
 
-relationship 62ca04ea-fe14-5bd2-9dd8-caa477d6d44e
+relationship 0c8180e7-52e3-5ea8-87e8-1d8fe1d8c449
 	fromColumn: VesselCalls.SourceID
 	toColumn: Sources.SourceID
 
-relationship c720ed49-b3ec-5358-b2a1-173bacf29713
+relationship accb42e1-bd6d-58d3-a68c-7228320841ce
 	fromColumn: Corridor.SourceID
 	toColumn: Sources.SourceID
+
+relationship 1c5215e3-d5c1-597c-9fd8-60f3cbdbec78
+	fromColumn: Operations.Month
+	toColumn: Calendar.Date
+
+relationship 59f216cd-b516-5220-ab50-d653d6c75cbf
+	fromColumn: OpsKPI.Month
+	toColumn: Calendar.Date
+
+relationship 2a2b6b5c-288f-5246-b34f-0e566adadeeb
+	fromColumn: Commercial.Month
+	toColumn: Calendar.Date
+
+relationship 0a723417-0c28-56b6-8cb3-c51fb384ed96
+	fromColumn: Finance.Month
+	toColumn: Calendar.Date
+
+relationship af296a9c-c6f3-51a3-9db7-5049f857850a
+	fromColumn: Capex.Month
+	toColumn: Calendar.Date
+
+relationship 112c6f92-f0c4-5bc5-9be3-9c2d550695f9
+	fromColumn: Operations.CargoType
+	toColumn: CargoTypes.CargoType
+
+relationship f7d9f064-ee1d-5407-b2e6-a226c11ba462
+	fromColumn: Commercial.CargoType
+	toColumn: CargoTypes.CargoType
+
+relationship e5798d19-6062-5ee1-a63c-4031b4280eb6
+	fromColumn: Commercial.CustomerID
+	toColumn: Customers.CustomerID
+
+relationship 365f679a-4d51-58df-95eb-d2d2dd55cf1d
+	fromColumn: Finance.AccountID
+	toColumn: Accounts.AccountID

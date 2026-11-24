@@ -212,6 +212,9 @@ def build(path):
     ws["A1"].font = Font(name=FONT, size=16, bold=True, color=NAVY)
     lines = [
         ("Purpose", "Source data for the Power BI project 'PortOfNEOM.pbip'. Each data sheet holds one Excel Table (tbl...) that Power BI loads."),
+        ("TWO KINDS OF DATA", "Orange tabs = ILLUSTRATIVE commercial, operations and finance model (generated, not actual Port of NEOM figures). Uncoloured tabs = public facts with sources."),
+        ("Illustrative model", "The port publishes no commercial, operating or financial results. Volumes are synthetic, shaped to the public picture; customers are fictional; tariffs and cost drivers are assumptions. Revenue, costs and the forecast are formulas driven by the Assumptions sheet, so replacing the inputs with real data updates everything."),
+        ("To use real data", "Overwrite Operations (Volume, VesselCalls, BerthHours), OpsKPI inputs, Customers, CargoTypes rates, Capex and the Finance budget rows; or paste actual ledger values over the Finance 'Actual' formulas."),
         ("Compiled", "24 November 2026, from public reporting found by web search. Nothing here is from NEOM's internal systems."),
         ("How to read it", "Every row has a SourceID. Look it up on the Sources sheet for the publisher, title and URL."),
         ("Formula columns", "Black-on-white cells with formulas (USD conversions, averages, shares) recalculate from the inputs. The SAR/USD rate is on the Assumptions sheet."),
@@ -419,6 +422,9 @@ def build(path):
     s.add_chart(ch2, "E29")
     for col_ in "EFGHIJKLMN":
         s.column_dimensions[col_].width = 13
+
+    from model_data import add_model
+    add_model(wb, data_sheet, wa)
 
     wb.save(path)
 

@@ -1,0 +1,176 @@
+table Forecast
+	lineageTag: f0bec9a6-db97-5333-ab84-e7882ae7b103
+
+	measure 'Forecast TEU' = SUM(Forecast[ContainerTEU])
+		formatString: #,##0
+		lineageTag: 768b6717-cdd8-5182-9a4a-13eb0aadfaac
+
+	measure 'Forecast Revenue (SAR m)' = SUM(Forecast[RevenueSARm])
+		formatString: #,##0
+		lineageTag: da42f326-f3e5-55c8-bdb5-24d5e9dbf742
+
+	measure 'Forecast Opex (SAR m)' = SUM(Forecast[OpexSARm])
+		formatString: #,##0
+		lineageTag: 4905b873-a93d-5a1d-b0db-65f6b94a619d
+
+	measure 'Forecast EBITDA (SAR m)' = SUM(Forecast[EBITDASARm])
+		formatString: #,##0;-#,##0
+		lineageTag: ce2391a1-1d72-589e-82e7-e2fd28546531
+
+	measure 'Forecast EBITDA Margin' = DIVIDE([Forecast EBITDA (SAR m)], [Forecast Revenue (SAR m)])
+		formatString: 0.0%
+		lineageTag: 9016e239-f633-56af-a8e2-4d1ae855c312
+
+	measure 'Forecast Capex (SAR m)' = SUM(Forecast[CapexSARm])
+		formatString: #,##0
+		lineageTag: 74d2aaba-9416-5640-b347-110eb39e26af
+
+	measure 'Base 2031 TEU' = CALCULATE([Forecast TEU], Forecast[Scenario] = "Base", Forecast[Year] = 2031)
+		formatString: #,##0
+		lineageTag: 85b911a5-d030-5727-b607-706b09aff0a7
+
+	measure 'Base 2031 Revenue (SAR m)' = CALCULATE([Forecast Revenue (SAR m)], Forecast[Scenario] = "Base", Forecast[Year] = 2031)
+		formatString: #,##0
+		lineageTag: a1121493-3e6f-5292-9f86-85c3af83e496
+
+	measure 'Base 2031 EBITDA (SAR m)' = CALCULATE([Forecast EBITDA (SAR m)], Forecast[Scenario] = "Base", Forecast[Year] = 2031)
+		formatString: #,##0;-#,##0
+		lineageTag: a0d8327c-d803-57da-984c-954f97e8c619
+
+	measure 'Base 2031 EBITDA Margin' = CALCULATE([Forecast EBITDA Margin], Forecast[Scenario] = "Base", Forecast[Year] = 2031)
+		formatString: 0.0%
+		lineageTag: d819e77b-cad0-5d89-a044-5b3bcb871864
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: e95ac558-de6e-5a00-83fc-7cda5099232a
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scenario
+		dataType: string
+		lineageTag: 5d351526-5fae-51e1-90ec-dd95d37e9e7a
+		summarizeBy: none
+		sourceColumn: Scenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column T1CapacityTEU
+		dataType: double
+		lineageTag: 91df1ff0-2755-5398-890a-e0dfa6405c99
+		summarizeBy: none
+		sourceColumn: T1CapacityTEU
+
+		annotation SummarizationSetBy = Automatic
+
+	column T1Utilisation
+		dataType: double
+		lineageTag: 1ee19b08-8d26-5b8f-8ebd-10f8df846529
+		summarizeBy: none
+		sourceColumn: T1Utilisation
+
+		annotation SummarizationSetBy = Automatic
+
+	column NonContainerGrowth
+		dataType: double
+		lineageTag: 5dbfd776-15f0-5af4-92b5-08edb89c1584
+		summarizeBy: none
+		sourceColumn: NonContainerGrowth
+
+		annotation SummarizationSetBy = Automatic
+
+	column CapexSARm
+		dataType: double
+		lineageTag: 0243379d-1a1a-5fbf-9960-4b2a214a70a7
+		summarizeBy: sum
+		sourceColumn: CapexSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContainerTEU
+		dataType: double
+		lineageTag: 101f576b-3ac8-5ea0-91f1-a7f249e7d514
+		summarizeBy: sum
+		sourceColumn: ContainerTEU
+
+		annotation SummarizationSetBy = Automatic
+
+	column NonContainerTonnes
+		dataType: double
+		lineageTag: ebfecfee-9770-5d6d-a03d-2db1885fda6d
+		summarizeBy: sum
+		sourceColumn: NonContainerTonnes
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContainerRevenueSARm
+		dataType: double
+		lineageTag: b98f49cf-d40d-5b58-bec5-efb114d29e48
+		summarizeBy: sum
+		sourceColumn: ContainerRevenueSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column NonContainerRevenueSARm
+		dataType: double
+		lineageTag: 138e74c7-c4aa-5843-b0bd-e21d4fee884e
+		summarizeBy: sum
+		sourceColumn: NonContainerRevenueSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column LeaseIncomeSARm
+		dataType: double
+		lineageTag: 715cf7c6-d998-504f-a264-9e37925ed263
+		summarizeBy: sum
+		sourceColumn: LeaseIncomeSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevenueSARm
+		dataType: double
+		lineageTag: 16be295b-1c7e-5a9b-9f1b-e91565202d6e
+		summarizeBy: sum
+		sourceColumn: RevenueSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpexSARm
+		dataType: double
+		lineageTag: 8ea7aad3-de68-5eb9-8c1a-2158de0a1fc1
+		summarizeBy: sum
+		sourceColumn: OpexSARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column EBITDASARm
+		dataType: double
+		lineageTag: e33ddde2-b566-5caa-9407-fbb549b303bb
+		summarizeBy: sum
+		sourceColumn: EBITDASARm
+
+		annotation SummarizationSetBy = Automatic
+
+	column EBITDAMargin
+		dataType: double
+		lineageTag: d2ed6914-69c4-5fb5-a290-e17b3023a222
+		summarizeBy: none
+		sourceColumn: EBITDAMargin
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Forecast = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblForecast",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"Year", "Scenario", "T1CapacityTEU", "T1Utilisation", "NonContainerGrowth", "CapexSARm", "ContainerTEU", "NonContainerTonnes", "ContainerRevenueSARm", "NonContainerRevenueSARm", "LeaseIncomeSARm", "RevenueSARm", "OpexSARm", "EBITDASARm", "EBITDAMargin"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"Year", Int64.Type}, {"Scenario", type text}, {"T1CapacityTEU", type number}, {"T1Utilisation", type number}, {"NonContainerGrowth", type number}, {"CapexSARm", type number}, {"ContainerTEU", type number}, {"NonContainerTonnes", type number}, {"ContainerRevenueSARm", type number}, {"NonContainerRevenueSARm", type number}, {"LeaseIncomeSARm", type number}, {"RevenueSARm", type number}, {"OpexSARm", type number}, {"EBITDASARm", type number}, {"EBITDAMargin", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

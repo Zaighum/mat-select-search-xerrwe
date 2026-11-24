@@ -8,7 +8,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["ExcelFilePath","PortProfile","Timeline","CapacityPlan","Equipment","Contracts","Investment","VesselCalls","Corridor","Sources"]
+annotation PBI_QueryOrder = ["ExcelFilePath","PortProfile","Timeline","CapacityPlan","Equipment","Contracts","Investment","VesselCalls","Corridor","Sources","Calendar","CargoTypes","Customers","Accounts","Operations","OpsKPI","Commercial","Finance","Capex","Forecast"]
 
 ref table PortProfile
 ref table Timeline
@@ -19,3 +19,13 @@ ref table Investment
 ref table VesselCalls
 ref table Corridor
 ref table Sources
+ref table Calendar
+ref table CargoTypes
+ref table Customers
+ref table Accounts
+ref table Operations
+ref table OpsKPI
+ref table Commercial
+ref table Finance
+ref table Capex
+ref table Forecast

@@ -1,0 +1,68 @@
+table Calendar
+	lineageTag: 5a7c51bd-997c-5621-9407-20a42c3e0756
+
+	column Date
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		isKey
+		lineageTag: 9bd344e0-5120-538f-b305-2c5fd8c4a8d2
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: c4aba13d-eac6-5146-83ec-f6d644f8f3da
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: string
+		lineageTag: 973aa678-55a6-5669-9d06-300560ce7f63
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNo
+		dataType: int64
+		formatString: 0
+		lineageTag: a8fef072-184b-5fd5-a155-c7abc62aa95f
+		summarizeBy: none
+		sourceColumn: MonthNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		sortByColumn: MonthNo
+		lineageTag: 33ba0d83-e601-5914-ad3d-bf22c62bb538
+		summarizeBy: none
+		sourceColumn: MonthName
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		dataType: string
+		lineageTag: b4132ab3-1686-5a2f-b8f6-2e2e6192ba79
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCalendar",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"Date", "Year", "Quarter", "MonthNo", "MonthName", "YearMonth"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"Date", type date}, {"Year", Int64.Type}, {"Quarter", type text}, {"MonthNo", Int64.Type}, {"MonthName", type text}, {"YearMonth", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

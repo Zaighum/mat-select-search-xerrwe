@@ -1,0 +1,72 @@
+table CargoTypes
+	lineageTag: 53b22cb6-391a-56af-852b-610f60113948
+
+	column CargoType
+		dataType: string
+		isKey
+		lineageTag: 1856c2b1-cdcd-551d-992e-305483cdb20a
+		summarizeBy: none
+		sourceColumn: CargoType
+
+		annotation SummarizationSetBy = Automatic
+
+	column BillingUnit
+		dataType: string
+		lineageTag: 550eaf82-5665-5984-ac16-e5d027528ff2
+		summarizeBy: none
+		sourceColumn: BillingUnit
+
+		annotation SummarizationSetBy = Automatic
+
+	column TonnesPerUnit
+		dataType: double
+		lineageTag: ff5ca2d0-b491-58f6-b6b1-383f6fb6ed7d
+		summarizeBy: none
+		sourceColumn: TonnesPerUnit
+
+		annotation SummarizationSetBy = Automatic
+
+	column HandlingRateSAR
+		dataType: double
+		lineageTag: 60ef8f4a-95d1-5334-81cc-2c2b8da99f38
+		summarizeBy: none
+		sourceColumn: HandlingRateSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column StorageRateSAR
+		dataType: double
+		lineageTag: 2d8cdcc1-7dd6-5d85-b8ce-7015c792712f
+		summarizeBy: none
+		sourceColumn: StorageRateSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column MarineRatePerCallSAR
+		dataType: double
+		lineageTag: ca439316-a10d-565e-bf1a-2a52a5c095f4
+		summarizeBy: none
+		sourceColumn: MarineRatePerCallSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column StorageShare
+		dataType: double
+		lineageTag: b5d8900a-f334-5479-b6ea-aba75fade943
+		summarizeBy: none
+		sourceColumn: StorageShare
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CargoTypes = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCargoTypes",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"CargoType", "BillingUnit", "TonnesPerUnit", "HandlingRateSAR", "StorageRateSAR", "MarineRatePerCallSAR", "StorageShare"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"CargoType", type text}, {"BillingUnit", type text}, {"TonnesPerUnit", type number}, {"HandlingRateSAR", type number}, {"StorageRateSAR", type number}, {"MarineRatePerCallSAR", type number}, {"StorageShare", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

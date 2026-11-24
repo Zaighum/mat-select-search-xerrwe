@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "205b34dd11c691c6649b",
+  "position": {
+    "x": 770.4000000000001,
+    "y": 92,
+    "z": 7000,
+    "height": 96,
+    "width": 236.8,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Commercial"
+                    }
+                  },
+                  "Property": "Discounts (SAR m)"
+                }
+              },
+              "queryRef": "Commercial.Discounts (SAR m)",
+              "displayName": "Discounts given (SAR m)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

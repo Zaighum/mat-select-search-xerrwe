@@ -1,0 +1,80 @@
+table Customers
+	lineageTag: b2ceef26-d8fa-5057-a9e2-3d1e6b431d14
+
+	column CustomerID
+		dataType: string
+		isKey
+		lineageTag: 7daf76b6-d18a-512f-ba4e-c6d2e5bf1167
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer
+		dataType: string
+		lineageTag: d08cfaf6-54e4-531a-b29f-1fb56ba21500
+		summarizeBy: none
+		sourceColumn: Customer
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segment
+		dataType: string
+		lineageTag: f60060c2-904b-51d6-8134-135b21379937
+		summarizeBy: none
+		sourceColumn: Segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column CargoType
+		dataType: string
+		lineageTag: de8cc52a-4f5b-5b81-8c46-b7db3e4c0efe
+		summarizeBy: none
+		sourceColumn: CargoType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 3b63c7f7-6ac1-5a23-bbf9-91cd84fbf82f
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContractType
+		dataType: string
+		lineageTag: 8fbad8f2-19ce-509e-aee6-a37840a82a34
+		summarizeBy: none
+		sourceColumn: ContractType
+
+		annotation SummarizationSetBy = Automatic
+
+	column VolumeShare
+		dataType: double
+		lineageTag: 9b19f542-fa5a-5820-b92d-6b18dba5549f
+		summarizeBy: none
+		sourceColumn: VolumeShare
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiscountPct
+		dataType: double
+		lineageTag: 58532406-1c5b-5209-8a91-6a135c5c0f48
+		summarizeBy: none
+		sourceColumn: DiscountPct
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Customers = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCustomers",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"CustomerID", "Customer", "Segment", "CargoType", "Region", "ContractType", "VolumeShare", "DiscountPct"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"CustomerID", type text}, {"Customer", type text}, {"Segment", type text}, {"CargoType", type text}, {"Region", type text}, {"ContractType", type text}, {"VolumeShare", type number}, {"DiscountPct", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

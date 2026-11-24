@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "7f653fdb6863e6c0e22e",
+  "position": {
+    "x": 521.6,
+    "y": 92,
+    "z": 6000,
+    "height": 96,
+    "width": 236.8,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Commercial"
+                    }
+                  },
+                  "Property": "Revenue per Tonne (SAR)"
+                }
+              },
+              "queryRef": "Commercial.Revenue per Tonne (SAR)",
+              "displayName": "Revenue per tonne (SAR)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

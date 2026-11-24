@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "ba724bf2303c867390db",
+  "position": {
+    "x": 912.5714285714287,
+    "y": 92,
+    "z": 8000,
+    "height": 96,
+    "width": 165.71428571428572,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Capex"
+                    }
+                  },
+                  "Property": "Capex Actual (SAR m)"
+                }
+              },
+              "queryRef": "Capex.Capex Actual (SAR m)",
+              "displayName": "Capex (SAR m)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

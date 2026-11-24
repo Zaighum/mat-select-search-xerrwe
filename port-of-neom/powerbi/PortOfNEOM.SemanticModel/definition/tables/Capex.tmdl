@@ -1,0 +1,68 @@
+table Capex
+	lineageTag: bbb7e7d4-f2cb-5c6e-a8cd-3d6ce8cb883a
+
+	measure 'Capex Actual (SAR m)' = SUM(Capex[ActualSAR]) / 1000000
+		formatString: #,##0
+		lineageTag: ef2b1d6d-b62a-58d3-b71e-d59458e0c93e
+
+	measure 'Capex Budget (SAR m)' = SUM(Capex[BudgetSAR]) / 1000000
+		formatString: #,##0
+		lineageTag: 3daf67a6-fc27-572f-9794-b2f2e98dbcb2
+
+	measure 'Capex Variance (SAR m)' = [Capex Actual (SAR m)] - [Capex Budget (SAR m)]
+		formatString: #,##0;-#,##0
+		lineageTag: 1866752e-a0da-5326-9b98-ab835a7fd47d
+
+	column CapexID
+		dataType: string
+		lineageTag: 5e922e5f-7550-59b2-95a5-cae91f869f70
+		summarizeBy: none
+		sourceColumn: CapexID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 6e9b3cac-12cd-5974-90bd-e0c7c9f89577
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: 24995729-355e-51e6-b3ef-b2cdc87dc3fc
+		summarizeBy: none
+		sourceColumn: Project
+
+		annotation SummarizationSetBy = Automatic
+
+	column BudgetSAR
+		dataType: double
+		lineageTag: 4f08bf31-7a9c-552f-8dfe-7cb13c786297
+		summarizeBy: sum
+		sourceColumn: BudgetSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActualSAR
+		dataType: double
+		lineageTag: 9b9cb72a-00e3-5caa-901a-9e3c1dafbb9f
+		summarizeBy: sum
+		sourceColumn: ActualSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Capex = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCapex",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"CapexID", "Month", "Project", "BudgetSAR", "ActualSAR"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"CapexID", type text}, {"Month", type date}, {"Project", type text}, {"BudgetSAR", type number}, {"ActualSAR", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

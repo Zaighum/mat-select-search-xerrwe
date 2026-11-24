@@ -1,0 +1,139 @@
+table OpsKPI
+	lineageTag: 7e34c353-aa32-5d18-a7f8-76d737f7ad73
+
+	measure 'Berth Occupancy' = AVERAGE(OpsKPI[BerthOccupancy])
+		formatString: 0.0%
+		lineageTag: bf2f9dae-eaa9-5bad-8e49-7ba06f76d5df
+
+	measure 'Crane Moves per Hour' = AVERAGE(OpsKPI[CraneMovesPerHour])
+		formatString: 0.0
+		lineageTag: 5aca02c8-ec36-5047-974a-f3f50670854b
+
+	measure 'Truck Turn (min)' = AVERAGE(OpsKPI[TruckTurnMin])
+		formatString: 0.0
+		lineageTag: ae0025ab-606d-5d26-b923-d9c9ac822a1c
+
+	measure 'Anchorage Wait (hrs)' = AVERAGE(OpsKPI[AnchorageWaitHrs])
+		formatString: 0.0
+		lineageTag: 313f3a84-5fed-5383-9e85-4ce57b498c89
+
+	measure 'Equipment Availability' = AVERAGE(OpsKPI[EquipmentAvailability])
+		formatString: 0.0%
+		lineageTag: 98bec879-26db-5d8d-a274-803f96450726
+
+	measure 'Lost Time Injuries' = SUM(OpsKPI[LostTimeInjuries])
+		formatString: 0
+		lineageTag: 8e953456-1ac3-5f74-8a88-505ab11f2e59
+
+	measure 'LTIFR' = DIVIDE(SUM(OpsKPI[LostTimeInjuries]) * 1000000, SUM(OpsKPI[ManHours]))
+		formatString: 0.00
+		lineageTag: b299b285-8933-5f6b-b3fa-31a82a584495
+
+	measure 'Avg Headcount' = AVERAGE(OpsKPI[Headcount])
+		formatString: #,##0
+		lineageTag: 8eadd4e9-cbab-510e-a635-dd9d7db5f40a
+
+	column Month
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: a3a19abf-d470-54d3-88c6-1ff3c0f27f4e
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Headcount
+		dataType: int64
+		formatString: 0
+		lineageTag: a4c60108-91a4-5d1d-a791-6e18dd677964
+		summarizeBy: none
+		sourceColumn: Headcount
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnchorageWaitHrs
+		dataType: double
+		lineageTag: 4f1e7176-1d10-5632-adf9-0608f06ae03c
+		summarizeBy: none
+		sourceColumn: AnchorageWaitHrs
+
+		annotation SummarizationSetBy = Automatic
+
+	column CraneMovesPerHour
+		dataType: double
+		lineageTag: ed75b475-4ecb-59dc-af11-11acceba8e70
+		summarizeBy: none
+		sourceColumn: CraneMovesPerHour
+
+		annotation SummarizationSetBy = Automatic
+
+	column TruckTurnMin
+		dataType: double
+		lineageTag: 437c08dd-e190-594d-9260-e5192358b473
+		summarizeBy: none
+		sourceColumn: TruckTurnMin
+
+		annotation SummarizationSetBy = Automatic
+
+	column EquipmentAvailability
+		dataType: double
+		lineageTag: 969b88a6-5c67-50fc-8613-5d981435ef12
+		summarizeBy: none
+		sourceColumn: EquipmentAvailability
+
+		annotation SummarizationSetBy = Automatic
+
+	column LostTimeInjuries
+		dataType: int64
+		formatString: 0
+		lineageTag: 5959341e-107c-5e7f-b5ef-a641e867dbd3
+		summarizeBy: sum
+		sourceColumn: LostTimeInjuries
+
+		annotation SummarizationSetBy = Automatic
+
+	column BerthHours
+		dataType: double
+		lineageTag: 63587fc1-03e4-553d-9311-5d646fb5ca47
+		summarizeBy: sum
+		sourceColumn: BerthHours
+
+		annotation SummarizationSetBy = Automatic
+
+	column VesselCalls
+		dataType: int64
+		formatString: 0
+		lineageTag: 61ab7ed9-2a5f-579b-acea-f7c60561f170
+		summarizeBy: sum
+		sourceColumn: VesselCalls
+
+		annotation SummarizationSetBy = Automatic
+
+	column BerthOccupancy
+		dataType: double
+		lineageTag: 300d8217-10e5-5443-9699-f026f4793bf9
+		summarizeBy: none
+		sourceColumn: BerthOccupancy
+
+		annotation SummarizationSetBy = Automatic
+
+	column ManHours
+		dataType: double
+		lineageTag: 31d169e9-8fda-542c-9b9a-97323b4bdf3a
+		summarizeBy: sum
+		sourceColumn: ManHours
+
+		annotation SummarizationSetBy = Automatic
+
+	partition OpsKPI = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblOpsKPI",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"Month", "Headcount", "AnchorageWaitHrs", "CraneMovesPerHour", "TruckTurnMin", "EquipmentAvailability", "LostTimeInjuries", "BerthHours", "VesselCalls", "BerthOccupancy", "ManHours"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"Month", type date}, {"Headcount", Int64.Type}, {"AnchorageWaitHrs", type number}, {"CraneMovesPerHour", type number}, {"TruckTurnMin", type number}, {"EquipmentAvailability", type number}, {"LostTimeInjuries", Int64.Type}, {"BerthHours", type number}, {"VesselCalls", Int64.Type}, {"BerthOccupancy", type number}, {"ManHours", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

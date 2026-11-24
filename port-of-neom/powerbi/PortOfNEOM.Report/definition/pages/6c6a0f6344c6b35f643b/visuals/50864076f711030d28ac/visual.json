@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "50864076f711030d28ac",
+  "position": {
+    "x": 24.0,
+    "y": 92,
+    "z": 4000,
+    "height": 96,
+    "width": 236.8,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Commercial"
+                    }
+                  },
+                  "Property": "Net Revenue (SAR m)"
+                }
+              },
+              "queryRef": "Commercial.Net Revenue (SAR m)",
+              "displayName": "Net revenue (SAR m)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

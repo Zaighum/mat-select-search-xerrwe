@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "994deb96c37cdcdd125e",
+  "position": {
+    "x": 272.8,
+    "y": 92,
+    "z": 5000,
+    "height": 96,
+    "width": 236.8,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Commercial"
+                    }
+                  },
+                  "Property": "Customer Tonnes (k)"
+                }
+              },
+              "queryRef": "Commercial.Customer Tonnes (k)",
+              "displayName": "Tonnes (thousand)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

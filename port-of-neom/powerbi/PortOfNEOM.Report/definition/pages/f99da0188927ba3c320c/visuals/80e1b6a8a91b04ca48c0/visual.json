@@ -1,0 +1,133 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "80e1b6a8a91b04ca48c0",
+  "position": {
+    "x": 646,
+    "y": 462,
+    "z": 14000,
+    "height": 234,
+    "width": 610,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CargoTypes"
+                    }
+                  },
+                  "Property": "CargoType"
+                }
+              },
+              "queryRef": "CargoTypes.CargoType",
+              "displayName": "Cargo type"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Operations"
+                    }
+                  },
+                  "Property": "Tonnes (k)"
+                }
+              },
+              "queryRef": "Operations.Tonnes (k)",
+              "displayName": "Tonnes (k)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Operations"
+                    }
+                  },
+                  "Property": "Vessel Calls"
+                }
+              },
+              "queryRef": "Operations.Vessel Calls",
+              "displayName": "Calls"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Operations"
+                    }
+                  },
+                  "Property": "Berth Hours"
+                }
+              },
+              "queryRef": "Operations.Berth Hours",
+              "displayName": "Berth hours"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Operations"
+                    }
+                  },
+                  "Property": "Avg Turnaround (hrs)"
+                }
+              },
+              "queryRef": "Operations.Avg Turnaround (hrs)",
+              "displayName": "Avg hrs at berth"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Operations"
+                  }
+                },
+                "Property": "Tonnes (k)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Performance by cargo type'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

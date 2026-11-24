@@ -1,0 +1,148 @@
+table Commercial
+	lineageTag: 1575ebcd-017b-580b-a120-fb3657ff420a
+
+	measure 'Net Revenue (SAR m)' = SUM(Commercial[NetRevenueSAR]) / 1000000
+		formatString: #,##0.0
+		lineageTag: 4b95dd8e-35a1-507c-b9ea-5e4b2bc0576b
+
+	measure 'Handling Revenue (SAR m)' = (SUM(Commercial[GrossHandlingSAR]) - SUM(Commercial[DiscountSAR])) / 1000000
+		formatString: #,##0.0
+		lineageTag: 469ae123-06b6-58a4-94d5-0579029ff382
+
+	measure 'Marine Revenue (SAR m)' = SUM(Commercial[MarineRevenueSAR]) / 1000000
+		formatString: #,##0.0
+		lineageTag: 1be92458-e0b4-5643-886a-9979cbb80746
+
+	measure 'Storage Revenue (SAR m)' = SUM(Commercial[StorageRevenueSAR]) / 1000000
+		formatString: #,##0.0
+		lineageTag: c7854ac5-6cbb-5f7b-935f-429e8b6de4dc
+
+	measure 'Discounts (SAR m)' = SUM(Commercial[DiscountSAR]) / 1000000
+		formatString: #,##0.0
+		lineageTag: 3a22f329-b794-51a9-b4e9-3efe14a54801
+
+	measure 'Customer Tonnes (k)' = SUM(Commercial[Tonnes]) / 1000
+		formatString: #,##0
+		lineageTag: 76a22b79-8dd5-5d22-bef6-4ea03804ba55
+
+	measure 'Revenue per Tonne (SAR)' = DIVIDE(SUM(Commercial[NetRevenueSAR]), SUM(Commercial[Tonnes]))
+		formatString: 0.0
+		lineageTag: eeed17ab-e645-5991-8d36-d2619578f91c
+
+	measure 'Revenue Share' = DIVIDE([Net Revenue (SAR m)], CALCULATE([Net Revenue (SAR m)], ALLSELECTED(Customers)))
+		formatString: 0.0%
+		lineageTag: f18853f1-1ff0-514b-bedd-d18c8f66a5db
+
+	measure 'Active Customers' = DISTINCTCOUNT(Commercial[CustomerID])
+		formatString: 0
+		lineageTag: 5dff0a81-24f1-52c4-93ba-81b18db0644a
+
+	column RevenueID
+		dataType: string
+		lineageTag: 54e3d474-d085-5fd3-9d67-5d5f95e0ff59
+		summarizeBy: none
+		sourceColumn: RevenueID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 16638a55-8e37-5712-b976-aa14797ee09d
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		lineageTag: adbe5819-d616-5e37-87e5-fbf43ff4ea5e
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CargoType
+		dataType: string
+		lineageTag: fa8a9b74-0b3a-58d0-a7f9-067c4101d72e
+		summarizeBy: none
+		sourceColumn: CargoType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Volume
+		dataType: double
+		lineageTag: 6105e3ea-f640-5399-b0fb-503f8865b0b8
+		summarizeBy: sum
+		sourceColumn: Volume
+
+		annotation SummarizationSetBy = Automatic
+
+	column AttributedCalls
+		dataType: double
+		lineageTag: 3c84e690-9c08-5485-adca-a65a73ddeeb3
+		summarizeBy: sum
+		sourceColumn: AttributedCalls
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tonnes
+		dataType: double
+		lineageTag: 00559a80-6973-5a53-974d-53aeb9f77546
+		summarizeBy: sum
+		sourceColumn: Tonnes
+
+		annotation SummarizationSetBy = Automatic
+
+	column GrossHandlingSAR
+		dataType: double
+		lineageTag: cc5227ed-dca6-59ac-b871-d059bce4f314
+		summarizeBy: sum
+		sourceColumn: GrossHandlingSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiscountSAR
+		dataType: double
+		lineageTag: 4c38a502-b625-50d1-85eb-6f4af8eaa5ad
+		summarizeBy: sum
+		sourceColumn: DiscountSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column MarineRevenueSAR
+		dataType: double
+		lineageTag: ffa82f78-b18a-55fc-8f54-d9431c9dbc05
+		summarizeBy: sum
+		sourceColumn: MarineRevenueSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column StorageRevenueSAR
+		dataType: double
+		lineageTag: 2db28d24-0b03-5ca4-896b-bf20a0064437
+		summarizeBy: sum
+		sourceColumn: StorageRevenueSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	column NetRevenueSAR
+		dataType: double
+		lineageTag: 589913c6-cfe3-56d0-aa4b-a59dbae905e2
+		summarizeBy: sum
+		sourceColumn: NetRevenueSAR
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Commercial = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblCommercial",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"RevenueID", "Month", "CustomerID", "CargoType", "Volume", "AttributedCalls", "Tonnes", "GrossHandlingSAR", "DiscountSAR", "MarineRevenueSAR", "StorageRevenueSAR", "NetRevenueSAR"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"RevenueID", type text}, {"Month", type date}, {"CustomerID", type text}, {"CargoType", type text}, {"Volume", type number}, {"AttributedCalls", type number}, {"Tonnes", type number}, {"GrossHandlingSAR", type number}, {"DiscountSAR", type number}, {"MarineRevenueSAR", type number}, {"StorageRevenueSAR", type number}, {"NetRevenueSAR", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

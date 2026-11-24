@@ -81,7 +81,106 @@ TABLES = {
         [("Sources Cited", "COUNTROWS(Sources)", "0")]),
 }
 NO_SUM = {"StatementYear", "TargetYear", "Sequence", "Latitude", "Longitude", "NumericValue", "ShareOfSaudiTEU",
-          "StatedAvgPerMonth", "Months"}
+          "StatedAvgPerMonth", "Months", "Year", "MonthNo", "SortOrder", "TonnesPerUnit", "HandlingRateSAR",
+          "StorageRateSAR", "MarineRatePerCallSAR", "StorageShare", "VolumeShare", "DiscountPct", "Headcount",
+          "AnchorageWaitHrs", "CraneMovesPerHour", "TruckTurnMin", "EquipmentAvailability", "BerthOccupancy",
+          "T1CapacityTEU", "T1Utilisation", "NonContainerGrowth", "EBITDAMargin"}
+PUBLIC = list(TABLES)
+
+
+def act(cat):
+    return f'CALCULATE([Actual (SAR m)], Accounts[Category] = "{cat}")'
+
+
+def bud(cat):
+    return f'CALCULATE([Budget (SAR m)], Accounts[Category] = "{cat}")'
+
+
+def base31(m):
+    return f'CALCULATE([{m}], Forecast[Scenario] = "Base", Forecast[Year] = 2031)'
+
+
+# ---- illustrative commercial / operations / finance model ----
+TABLES.update({
+    "Calendar": ("tblCalendar", [("Date", DT), ("Year", I), ("Quarter", S), ("MonthNo", I), ("MonthName", S),
+                                 ("YearMonth", S)], []),
+    "CargoTypes": ("tblCargoTypes", [("CargoType", S), ("BillingUnit", S), ("TonnesPerUnit", D), ("HandlingRateSAR", D),
+                                     ("StorageRateSAR", D), ("MarineRatePerCallSAR", D), ("StorageShare", D)], []),
+    "Customers": ("tblCustomers", [("CustomerID", S), ("Customer", S), ("Segment", S), ("CargoType", S), ("Region", S),
+                                   ("ContractType", S), ("VolumeShare", D), ("DiscountPct", D)], []),
+    "Accounts": ("tblAccounts", [("AccountID", S), ("Account", S), ("Category", S), ("SortOrder", I)], []),
+    "Operations": ("tblOperations", [("OpsID", S), ("Month", DT), ("CargoType", S), ("Volume", D), ("VesselCalls", I),
+                                     ("BerthHours", D), ("Tonnes", D)],
+                   [("Tonnes (k)", "SUM(Operations[Tonnes]) / 1000", "#,##0"),
+                    ("Vessel Calls", "SUM(Operations[VesselCalls])", "#,##0"),
+                    ("Berth Hours", "SUM(Operations[BerthHours])", "#,##0"),
+                    ("Avg Turnaround (hrs)", "DIVIDE(SUM(Operations[BerthHours]), SUM(Operations[VesselCalls]))", "0.0"),
+                    ("Container TEU", 'CALCULATE(SUM(Operations[Volume]), Operations[CargoType] = "Container")', "#,##0"),
+                    ("RoRo Units", 'CALCULATE(SUM(Operations[Volume]), Operations[CargoType] = "RoRo")', "#,##0")]),
+    "OpsKPI": ("tblOpsKPI", [("Month", DT), ("Headcount", I), ("AnchorageWaitHrs", D), ("CraneMovesPerHour", D),
+                             ("TruckTurnMin", D), ("EquipmentAvailability", D), ("LostTimeInjuries", I),
+                             ("BerthHours", D), ("VesselCalls", I), ("BerthOccupancy", D), ("ManHours", D)],
+               [("Berth Occupancy", "AVERAGE(OpsKPI[BerthOccupancy])", "0.0%"),
+                ("Crane Moves per Hour", "AVERAGE(OpsKPI[CraneMovesPerHour])", "0.0"),
+                ("Truck Turn (min)", "AVERAGE(OpsKPI[TruckTurnMin])", "0.0"),
+                ("Anchorage Wait (hrs)", "AVERAGE(OpsKPI[AnchorageWaitHrs])", "0.0"),
+                ("Equipment Availability", "AVERAGE(OpsKPI[EquipmentAvailability])", "0.0%"),
+                ("Lost Time Injuries", "SUM(OpsKPI[LostTimeInjuries])", "0"),
+                ("LTIFR", "DIVIDE(SUM(OpsKPI[LostTimeInjuries]) * 1000000, SUM(OpsKPI[ManHours]))", "0.00"),
+                ("Avg Headcount", "AVERAGE(OpsKPI[Headcount])", "#,##0")]),
+    "Commercial": ("tblCommercial", [("RevenueID", S), ("Month", DT), ("CustomerID", S), ("CargoType", S), ("Volume", D),
+                                     ("AttributedCalls", D), ("Tonnes", D), ("GrossHandlingSAR", D), ("DiscountSAR", D),
+                                     ("MarineRevenueSAR", D), ("StorageRevenueSAR", D), ("NetRevenueSAR", D)],
+                   [("Net Revenue (SAR m)", "SUM(Commercial[NetRevenueSAR]) / 1000000", "#,##0.0"),
+                    ("Handling Revenue (SAR m)", "(SUM(Commercial[GrossHandlingSAR]) - SUM(Commercial[DiscountSAR])) / 1000000", "#,##0.0"),
+                    ("Marine Revenue (SAR m)", "SUM(Commercial[MarineRevenueSAR]) / 1000000", "#,##0.0"),
+                    ("Storage Revenue (SAR m)", "SUM(Commercial[StorageRevenueSAR]) / 1000000", "#,##0.0"),
+                    ("Discounts (SAR m)", "SUM(Commercial[DiscountSAR]) / 1000000", "#,##0.0"),
+                    ("Customer Tonnes (k)", "SUM(Commercial[Tonnes]) / 1000", "#,##0"),
+                    ("Revenue per Tonne (SAR)", "DIVIDE(SUM(Commercial[NetRevenueSAR]), SUM(Commercial[Tonnes]))", "0.0"),
+                    ("Revenue Share", "DIVIDE([Net Revenue (SAR m)], CALCULATE([Net Revenue (SAR m)], ALLSELECTED(Customers)))", "0.0%"),
+                    ("Active Customers", "DISTINCTCOUNT(Commercial[CustomerID])", "0")]),
+    "Finance": ("tblFinance", [("FinanceID", S), ("Month", DT), ("AccountID", S), ("Scenario", S), ("AmountSAR", D)],
+                [("Actual (SAR m)", 'CALCULATE(SUM(Finance[AmountSAR]), Finance[Scenario] = "Actual") / 1000000', "#,##0.0"),
+                 ("Budget (SAR m)", 'CALCULATE(SUM(Finance[AmountSAR]), Finance[Scenario] = "Budget") / 1000000', "#,##0.0"),
+                 ("Variance (SAR m)", "[Actual (SAR m)] - [Budget (SAR m)]", "#,##0.0;-#,##0.0"),
+                 ("Revenue (SAR m)", act("Revenue"), "#,##0.0"),
+                 ("Budget Revenue (SAR m)", bud("Revenue"), "#,##0.0"),
+                 ("Revenue vs Budget %", "DIVIDE([Revenue (SAR m)] - [Budget Revenue (SAR m)], [Budget Revenue (SAR m)])", "0.0%"),
+                 ("Opex (SAR m)", act("Opex"), "#,##0.0"),
+                 ("Budget Opex (SAR m)", bud("Opex"), "#,##0.0"),
+                 ("EBITDA (SAR m)", "[Revenue (SAR m)] - [Opex (SAR m)]", "#,##0.0;-#,##0.0"),
+                 ("Budget EBITDA (SAR m)", "[Budget Revenue (SAR m)] - [Budget Opex (SAR m)]", "#,##0.0;-#,##0.0"),
+                 ("EBITDA Margin", "DIVIDE([EBITDA (SAR m)], [Revenue (SAR m)])", "0.0%"),
+                 ("Depreciation (SAR m)", act("Depreciation"), "#,##0.0"),
+                 ("EBIT (SAR m)", "[EBITDA (SAR m)] - [Depreciation (SAR m)]", "#,##0.0;-#,##0.0")]),
+    "Capex": ("tblCapex", [("CapexID", S), ("Month", DT), ("Project", S), ("BudgetSAR", D), ("ActualSAR", D)],
+              [("Capex Actual (SAR m)", "SUM(Capex[ActualSAR]) / 1000000", "#,##0"),
+               ("Capex Budget (SAR m)", "SUM(Capex[BudgetSAR]) / 1000000", "#,##0"),
+               ("Capex Variance (SAR m)", "[Capex Actual (SAR m)] - [Capex Budget (SAR m)]", "#,##0;-#,##0")]),
+    "Forecast": ("tblForecast", [("Year", I), ("Scenario", S), ("T1CapacityTEU", D), ("T1Utilisation", D),
+                                 ("NonContainerGrowth", D), ("CapexSARm", D), ("ContainerTEU", D),
+                                 ("NonContainerTonnes", D), ("ContainerRevenueSARm", D), ("NonContainerRevenueSARm", D),
+                                 ("LeaseIncomeSARm", D), ("RevenueSARm", D), ("OpexSARm", D), ("EBITDASARm", D),
+                                 ("EBITDAMargin", D)],
+                 [("Forecast TEU", "SUM(Forecast[ContainerTEU])", "#,##0"),
+                  ("Forecast Revenue (SAR m)", "SUM(Forecast[RevenueSARm])", "#,##0"),
+                  ("Forecast Opex (SAR m)", "SUM(Forecast[OpexSARm])", "#,##0"),
+                  ("Forecast EBITDA (SAR m)", "SUM(Forecast[EBITDASARm])", "#,##0;-#,##0"),
+                  ("Forecast EBITDA Margin", "DIVIDE([Forecast EBITDA (SAR m)], [Forecast Revenue (SAR m)])", "0.0%"),
+                  ("Forecast Capex (SAR m)", "SUM(Forecast[CapexSARm])", "#,##0"),
+                  ("Base 2031 TEU", base31("Forecast TEU"), "#,##0"),
+                  ("Base 2031 Revenue (SAR m)", base31("Forecast Revenue (SAR m)"), "#,##0"),
+                  ("Base 2031 EBITDA (SAR m)", base31("Forecast EBITDA (SAR m)"), "#,##0;-#,##0"),
+                  ("Base 2031 EBITDA Margin", base31("Forecast EBITDA Margin"), "0.0%")]),
+})
+SORT_BY = {("Calendar", "MonthName"): "MonthNo", ("Accounts", "Account"): "SortOrder"}
+KEYS = {("Sources", "SourceID"), ("Calendar", "Date"), ("CargoTypes", "CargoType"), ("Customers", "CustomerID"),
+        ("Accounts", "AccountID")}
+RELATIONSHIPS = [((t, "SourceID"), ("Sources", "SourceID")) for t in PUBLIC if t != "Sources"] + [
+    ((t, "Month"), ("Calendar", "Date")) for t in ("Operations", "OpsKPI", "Commercial", "Finance", "Capex")] + [
+    (("Operations", "CargoType"), ("CargoTypes", "CargoType")), (("Commercial", "CargoType"), ("CargoTypes", "CargoType")),
+    (("Commercial", "CustomerID"), ("Customers", "CustomerID")), (("Finance", "AccountID"), ("Accounts", "AccountID"))]
 
 
 def table_tmdl(name, excel_table, cols, measures):
@@ -97,13 +196,15 @@ def table_tmdl(name, excel_table, cols, measures):
             o.append("\t\tformatString: dd MMM yyyy")
         elif ttype == "int64":
             o.append("\t\tformatString: 0")
+        if (name, c) in SORT_BY:
+            o.append(f"\t\tsortByColumn: {SORT_BY[(name, c)]}")
         if c == "URL":
             o.append("\t\tdataCategory: WebUrl")
         if c == "Latitude":
             o.append("\t\tdataCategory: Latitude")
         if c == "Longitude":
             o.append("\t\tdataCategory: Longitude")
-        if c == "SourceID" and name == "Sources":
+        if (name, c) in KEYS:
             o.append("\t\tisKey")
         agg = "sum" if ttype in ("int64", "double") and c not in NO_SUM else "none"
         o += [f"\t\tlineageTag: {tag('column', name, c)}", f"\t\tsummarizeBy: {agg}", f"\t\tsourceColumn: {c}", "",
@@ -149,9 +250,8 @@ def build_model(root):
         'expression ExcelFilePath = "C:\\PortOfNEOM\\Port_of_NEOM_Data.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]',
         f"\tlineageTag: {tag('expr', 'ExcelFilePath')}", "", "\tannotation PBI_ResultType = Text", "", ""]))
     rel = []
-    for t in TABLES:
-        if t != "Sources":
-            rel += [f"relationship {tag('rel', t)}", f"\tfromColumn: {t}.SourceID", "\ttoColumn: Sources.SourceID", ""]
+    for (ft, fc), (tt, tc) in RELATIONSHIPS:
+        rel += [f"relationship {tag('rel', ft, fc)}", f"\tfromColumn: {ft}.{fc}", f"\ttoColumn: {tt}.{tc}", ""]
     write(d / "relationships.tmdl", "\n".join(rel))
     for t, (xl, cols, measures) in TABLES.items():
         write(d / "tables" / f"{t}.tmdl", table_tmdl(t, xl, cols, measures))
@@ -231,7 +331,15 @@ def slicer(field, title_):
             "visualContainerObjects": vtitle(title_), "drillFilterOtherVisuals": True}
 
 
-def header(page_title):
+def header(page_title, illustrative=False):
+    if illustrative:
+        return [
+            ((24, 12, 800, 44), textbox(page_title, 20, NAVY, True)),
+            ((24, 54, 800, 30), textbox(
+                "ILLUSTRATIVE MODEL - generated data, not actual Port of NEOM figures. See the workbook README sheet.",
+                10, "#C00000", True)),
+            ((1056, 10, 200, 70), slicer(colf("Calendar", "Year"), "Year")),
+        ]
     return [
         ((24, 12, 900, 44), textbox(page_title, 20, NAVY, True)),
         ((24, 54, 1232, 30), textbox(
@@ -240,14 +348,115 @@ def header(page_title):
     ]
 
 
+def grid(a, b, c, d):
+    """Four visuals in a 2 x 2 grid under the card row."""
+    return [((24, 200, 610, 250), a), ((646, 200, 610, 250), b), ((24, 462, 610, 234), c), ((646, 462, 610, 234), d)]
+
+
 def cards(items, y=92, h=96):
     w = (1232 - 12 * (len(items) - 1)) / len(items)
     return [((24 + i * (w + 12), y, w, h), card(t, m, lbl)) for i, (t, m, lbl) in enumerate(items)]
 
 
 C, M = colf, meaf
-PAGES = [
-    ("Overview", header("Port of NEOM - Overview") + cards([
+DATE, YEAR = colf("Calendar", "Date"), colf("Calendar", "Year")
+MODEL_PAGES = [
+    ("Executive Summary", header("Port of NEOM - Executive Summary", True) + cards([
+        ("Finance", "Revenue (SAR m)", "Revenue (SAR m)"),
+        ("Finance", "EBITDA (SAR m)", "EBITDA (SAR m)"),
+        ("Finance", "EBITDA Margin", "EBITDA margin"),
+        ("Operations", "Tonnes (k)", "Tonnes handled (thousand)"),
+        ("Operations", "Vessel Calls", "Vessel calls"),
+        ("OpsKPI", "Berth Occupancy", "Berth occupancy (avg)"),
+    ]) + grid(
+        chart("lineChart", DATE, [M("Finance", "Revenue (SAR m)"), M("Finance", "Budget Revenue (SAR m)")],
+              "Monthly revenue, actual vs budget (SAR m)"),
+        chart("columnChart", DATE, [M("Operations", "Tonnes (k)")], "Tonnes handled by cargo type (thousand)",
+              series=C("CargoTypes", "CargoType")),
+        chart("clusteredColumnChart", YEAR, [M("Finance", "EBITDA (SAR m)"), M("Finance", "Budget EBITDA (SAR m)")],
+              "EBITDA by year, actual vs budget (SAR m)"),
+        chart("barChart", C("Customers", "Customer"), [M("Commercial", "Net Revenue (SAR m)")],
+              "Net revenue by customer (SAR m)", sort_by=(M("Commercial", "Net Revenue (SAR m)"), "Descending")))),
+    ("Commercial", header("Commercial", True) + [
+        ((836, 10, 200, 70), slicer(C("CargoTypes", "CargoType"), "Cargo type"))] + cards([
+        ("Commercial", "Net Revenue (SAR m)", "Net revenue (SAR m)"),
+        ("Commercial", "Customer Tonnes (k)", "Tonnes (thousand)"),
+        ("Commercial", "Revenue per Tonne (SAR)", "Revenue per tonne (SAR)"),
+        ("Commercial", "Discounts (SAR m)", "Discounts given (SAR m)"),
+        ("Commercial", "Active Customers", "Active customers"),
+    ]) + grid(
+        chart("columnChart", DATE, [M("Commercial", "Handling Revenue (SAR m)"), M("Commercial", "Marine Revenue (SAR m)"),
+                                    M("Commercial", "Storage Revenue (SAR m)")], "Monthly revenue by stream (SAR m)"),
+        chart("barChart", C("Customers", "Customer"), [M("Commercial", "Net Revenue (SAR m)")],
+              "Net revenue by customer (SAR m)", sort_by=(M("Commercial", "Net Revenue (SAR m)"), "Descending")),
+        chart("columnChart", YEAR, [M("Commercial", "Net Revenue (SAR m)")], "Net revenue by year and cargo type (SAR m)",
+              series=C("CargoTypes", "CargoType")),
+        table([(C("Customers", "Customer"), "Customer"), (C("Customers", "Segment"), "Segment"),
+               (C("Customers", "ContractType"), "Contract"), (M("Commercial", "Customer Tonnes (k)"), "Tonnes (k)"),
+               (M("Commercial", "Net Revenue (SAR m)"), "Revenue (SAR m)"),
+               (M("Commercial", "Revenue per Tonne (SAR)"), "SAR / tonne"), (M("Commercial", "Revenue Share"), "Share")],
+              "Customer league table", sort_by=(M("Commercial", "Net Revenue (SAR m)"), "Descending")))),
+    ("Operations", header("Operations", True) + [
+        ((836, 10, 200, 70), slicer(C("CargoTypes", "CargoType"), "Cargo type"))] + cards([
+        ("Operations", "Tonnes (k)", "Tonnes (thousand)"),
+        ("Operations", "Vessel Calls", "Vessel calls"),
+        ("Operations", "Avg Turnaround (hrs)", "Avg time at berth (hrs)"),
+        ("OpsKPI", "Berth Occupancy", "Berth occupancy (avg)"),
+        ("OpsKPI", "Crane Moves per Hour", "Crane moves per hour"),
+        ("OpsKPI", "Truck Turn (min)", "Truck turn time (min)"),
+        ("OpsKPI", "LTIFR", "Lost-time injury rate"),
+    ]) + grid(
+        chart("columnChart", DATE, [M("Operations", "Vessel Calls")], "Vessel calls by cargo type",
+              series=C("CargoTypes", "CargoType")),
+        chart("lineChart", DATE, [M("OpsKPI", "Berth Occupancy")], "Berth occupancy by month"),
+        chart("lineChart", DATE, [M("OpsKPI", "Anchorage Wait (hrs)"), M("OpsKPI", "Crane Moves per Hour"),
+                                  M("OpsKPI", "Truck Turn (min)")], "Anchorage wait (hrs), crane moves per hour, truck turn (min)"),
+        table([(C("CargoTypes", "CargoType"), "Cargo type"), (M("Operations", "Tonnes (k)"), "Tonnes (k)"),
+               (M("Operations", "Vessel Calls"), "Calls"), (M("Operations", "Berth Hours"), "Berth hours"),
+               (M("Operations", "Avg Turnaround (hrs)"), "Avg hrs at berth")],
+              "Performance by cargo type", sort_by=(M("Operations", "Tonnes (k)"), "Descending")))),
+    ("Finance", header("Finance", True) + cards([
+        ("Finance", "Revenue (SAR m)", "Revenue (SAR m)"),
+        ("Finance", "Revenue vs Budget %", "Revenue vs budget"),
+        ("Finance", "Opex (SAR m)", "Operating costs (SAR m)"),
+        ("Finance", "EBITDA (SAR m)", "EBITDA (SAR m)"),
+        ("Finance", "EBIT (SAR m)", "EBIT (SAR m)"),
+        ("Capex", "Capex Actual (SAR m)", "Capex (SAR m)"),
+        ("Capex", "Capex Variance (SAR m)", "Capex vs budget (SAR m)"),
+    ]) + grid(
+        table([(C("Accounts", "Account"), "Account"), (C("Accounts", "Category"), "Category"),
+               (M("Finance", "Actual (SAR m)"), "Actual"), (M("Finance", "Budget (SAR m)"), "Budget"),
+               (M("Finance", "Variance (SAR m)"), "Variance")],
+              "Income statement lines, actual vs budget (SAR m)", sort_by=(C("Accounts", "Account"), "Ascending")),
+        chart("columnChart", DATE, [M("Finance", "Opex (SAR m)")], "Operating costs by account (SAR m)",
+              series=C("Accounts", "Account")),
+        chart("lineChart", DATE, [M("Finance", "EBITDA (SAR m)"), M("Finance", "Budget EBITDA (SAR m)")],
+              "Monthly EBITDA, actual vs budget (SAR m)"),
+        chart("clusteredBarChart", C("Capex", "Project"), [M("Capex", "Capex Actual (SAR m)"), M("Capex", "Capex Budget (SAR m)")],
+              "Capex by project, actual vs budget (SAR m)"))),
+    ("Forecast 2027-2031", [
+        ((24, 12, 800, 44), textbox("Five-Year Forecast, 2027-2031", 20, NAVY, True)),
+        ((24, 54, 1232, 30), textbox(
+            "ILLUSTRATIVE MODEL - scenario assumptions, not Port of NEOM guidance. Terminal 1 capacity follows the public plan (700,000 TEU, then 1.5 million by 2030).",
+            10, "#C00000", True))] + cards([
+        ("Forecast", "Base 2031 TEU", "Base case: 2031 container TEU"),
+        ("Forecast", "Base 2031 Revenue (SAR m)", "Base case: 2031 revenue (SAR m)"),
+        ("Forecast", "Base 2031 EBITDA (SAR m)", "Base case: 2031 EBITDA (SAR m)"),
+        ("Forecast", "Base 2031 EBITDA Margin", "Base case: 2031 EBITDA margin"),
+    ]) + grid(
+        chart("lineChart", C("Forecast", "Year"), [M("Forecast", "Forecast TEU")], "Container volume by scenario (TEU)",
+              series=C("Forecast", "Scenario")),
+        chart("lineChart", C("Forecast", "Year"), [M("Forecast", "Forecast Revenue (SAR m)")], "Revenue by scenario (SAR m)",
+              series=C("Forecast", "Scenario")),
+        chart("lineChart", C("Forecast", "Year"), [M("Forecast", "Forecast EBITDA (SAR m)")], "EBITDA by scenario (SAR m)",
+              series=C("Forecast", "Scenario")),
+        table([(C("Forecast", "Scenario"), "Scenario"), (C("Forecast", "Year"), "Year"),
+               (M("Forecast", "Forecast TEU"), "TEU"), (M("Forecast", "Forecast Revenue (SAR m)"), "Revenue"),
+               (M("Forecast", "Forecast Opex (SAR m)"), "Opex"), (M("Forecast", "Forecast EBITDA (SAR m)"), "EBITDA"),
+               (M("Forecast", "Forecast Capex (SAR m)"), "Capex")], "Forecast detail (SAR m)"))),
+]
+PUBLIC_PAGES = [
+    ("Public Facts - Overview", header("Port of NEOM - Public Facts") + cards([
         ("CapacityPlan", "T1 Phase 1 Capacity (TEU)", "Terminal 1 Phase 1 capacity (TEU/yr)"),
         ("CapacityPlan", "T1 Target Capacity (TEU)", "Terminal 1 target capacity, 2030 (TEU/yr)"),
         ("PortProfile", "Quay Length (m)", "Quay wall (m)"),
@@ -264,7 +473,7 @@ PAGES = [
             (C("PortProfile", "Value"), "Value"), (C("PortProfile", "SourceID"), "Source")],
             "Port profile - key facts")),
     ]),
-    ("Infrastructure and Investment", header("Infrastructure and Investment") + cards([
+    ("Public Facts - Infrastructure", header("Public Facts - Infrastructure and Investment") + cards([
         ("Equipment", "Equipment Units", "Cranes reported ordered (units)"),
         ("Contracts", "Contract Value (SAR m)", "Reported contracts (SAR m, stated minimum)"),
         ("Investment", "Stated Investment (SAR bn)", "Highest stated investment (SAR bn)"),
@@ -283,7 +492,7 @@ PAGES = [
             (C("Contracts", "Note"), "Note"), (C("Contracts", "SourceID"), "Source")],
             "Reported contracts")),
     ]),
-    ("Traffic and Trade Corridor", header("Traffic and Trade Corridor") + cards([
+    ("Public Facts - Traffic", header("Public Facts - Traffic and Trade Corridor") + cards([
         ("VesselCalls", "RoRo Calls per Month (Pre-war)", "RoRo calls per month, pre-war"),
         ("VesselCalls", "RoRo Calls (Sep 2026)", "RoRo calls, September 2026"),
         ("VesselCalls", "RoRo Change vs Pre-war", "RoRo change vs pre-war"),
@@ -303,7 +512,7 @@ PAGES = [
             "Europe - Egypt - Port of NEOM - GCC / Iraq land bridge",
             sort_by=(C("Corridor", "Sequence"), "Ascending"))),
     ]),
-    ("Timeline and Sources", header("Timeline and Sources") + [
+    ("Public Facts - Timeline", header("Public Facts - Timeline and Sources") + [
         ((24, 92, 300, 70), slicer(C("Timeline", "Category"), "Category")),
         ((336, 92, 300, 70), slicer(C("Timeline", "Status"), "Status")),
         ((24, 174, 1232, 280), table([
@@ -317,6 +526,9 @@ PAGES = [
             "Sources", sort_by=(C("Sources", "SourceID"), "Ascending"))),
     ]),
 ]
+
+
+PAGES = MODEL_PAGES + PUBLIC_PAGES
 
 
 def build_report(root, theme):

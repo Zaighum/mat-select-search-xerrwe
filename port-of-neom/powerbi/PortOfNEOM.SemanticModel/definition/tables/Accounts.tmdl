@@ -1,0 +1,50 @@
+table Accounts
+	lineageTag: 7e8d7dec-c06f-5610-b273-0c66d27a91df
+
+	column AccountID
+		dataType: string
+		isKey
+		lineageTag: f5923810-11a4-5a05-b565-58cc1b572388
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Account
+		dataType: string
+		sortByColumn: SortOrder
+		lineageTag: 2c1e1008-4cb3-5cec-8641-45ce72d25780
+		summarizeBy: none
+		sourceColumn: Account
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 1c97dce9-4251-5d19-a703-7e61e1ab92c9
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		dataType: int64
+		formatString: 0
+		lineageTag: a8260946-1444-5717-91eb-cffba534bbd6
+		summarizeBy: none
+		sourceColumn: SortOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Accounts = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents(ExcelFilePath), null, true),
+				    Data = Source{[Item="tblAccounts",Kind="Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"AccountID", "Account", "Category", "SortOrder"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"AccountID", type text}, {"Account", type text}, {"Category", type text}, {"SortOrder", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

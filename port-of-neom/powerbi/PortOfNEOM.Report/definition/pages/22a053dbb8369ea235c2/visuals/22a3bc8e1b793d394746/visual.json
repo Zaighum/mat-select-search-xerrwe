@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "22a3bc8e1b793d394746",
+  "position": {
+    "x": 596,
+    "y": 268,
+    "z": 10000,
+    "height": 428,
+    "width": 660,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PortProfile"
+                    }
+                  },
+                  "Property": "Category"
+                }
+              },
+              "queryRef": "PortProfile.Category",
+              "displayName": "Category"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PortProfile"
+                    }
+                  },
+                  "Property": "Attribute"
+                }
+              },
+              "queryRef": "PortProfile.Attribute",
+              "displayName": "Attribute"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PortProfile"
+                    }
+                  },
+                  "Property": "Value"
+                }
+              },
+              "queryRef": "PortProfile.Value",
+              "displayName": "Value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PortProfile"
+                    }
+                  },
+                  "Property": "SourceID"
+                }
+              },
+              "queryRef": "PortProfile.SourceID",
+              "displayName": "Source"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Port profile - key facts'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

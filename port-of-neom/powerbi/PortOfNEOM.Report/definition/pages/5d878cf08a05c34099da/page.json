@@ -1,8 +1,0 @@
-{
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.4.0/schema.json",
-  "name": "5d878cf08a05c34099da",
-  "displayName": "Infrastructure and Investment",
-  "displayOption": "FitToPage",
-  "height": 720,
-  "width": 1280
-}

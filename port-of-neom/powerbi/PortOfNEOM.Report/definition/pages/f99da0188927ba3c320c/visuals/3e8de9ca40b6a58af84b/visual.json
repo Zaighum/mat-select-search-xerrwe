@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "3e8de9ca40b6a58af84b",
+  "position": {
+    "x": 557.1428571428571,
+    "y": 92,
+    "z": 7000,
+    "height": 96,
+    "width": 165.71428571428572,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OpsKPI"
+                    }
+                  },
+                  "Property": "Berth Occupancy"
+                }
+              },
+              "queryRef": "OpsKPI.Berth Occupancy",
+              "displayName": "Berth occupancy (avg)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

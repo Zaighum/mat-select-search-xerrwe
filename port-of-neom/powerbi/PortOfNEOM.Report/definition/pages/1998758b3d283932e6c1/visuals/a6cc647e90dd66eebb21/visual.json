@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "a6cc647e90dd66eebb21",
+  "position": {
+    "x": 646,
+    "y": 200,
+    "z": 7000,
+    "height": 250,
+    "width": 610,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "VesselCalls"
+                    }
+                  },
+                  "Property": "VesselType"
+                }
+              },
+              "queryRef": "VesselCalls.VesselType",
+              "displayName": "Vessel type"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "VesselCalls"
+                    }
+                  },
+                  "Property": "PeriodDetail"
+                }
+              },
+              "queryRef": "VesselCalls.PeriodDetail",
+              "displayName": "Period"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "VesselCalls"
+                    }
+                  },
+                  "Property": "Avg Calls per Month"
+                }
+              },
+              "queryRef": "VesselCalls.Avg Calls per Month",
+              "displayName": "Calls / month"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "VesselCalls"
+                    }
+                  },
+                  "Property": "Note"
+                }
+              },
+              "queryRef": "VesselCalls.Note",
+              "displayName": "Note"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vessel calls - detail'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

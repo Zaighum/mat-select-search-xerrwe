@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "ae5c04007f05e30d7712",
+  "position": {
+    "x": 24,
+    "y": 54,
+    "z": 1000,
+    "height": 30,
+    "width": 1232,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "ILLUSTRATIVE MODEL - scenario assumptions, not Port of NEOM guidance. Terminal 1 capacity follows the public plan (700,000 TEU, then 1.5 million by 2030).",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#C00000",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

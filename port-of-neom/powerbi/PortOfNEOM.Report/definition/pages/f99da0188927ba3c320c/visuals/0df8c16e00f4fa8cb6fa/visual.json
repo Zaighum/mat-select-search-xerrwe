@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "0df8c16e00f4fa8cb6fa",
+  "position": {
+    "x": 1090.2857142857142,
+    "y": 92,
+    "z": 10000,
+    "height": 96,
+    "width": 165.71428571428572,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OpsKPI"
+                    }
+                  },
+                  "Property": "LTIFR"
+                }
+              },
+              "queryRef": "OpsKPI.LTIFR",
+              "displayName": "Lost-time injury rate"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "24D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
